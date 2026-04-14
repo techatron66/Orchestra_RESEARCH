@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orchestra Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & base ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%;overflow:hidden}
+body{font-family:'EB Garamond',Georgia,serif;background:#f7f5f0;color:#17160d}
+button{font-family:inherit;cursor:pointer}
+textarea{font-family:inherit}
+
+/* ── Scrollbars ─────────────────────────────────────── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+.dk::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08)}
+
+/* ── Animations ─────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.86) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes dotBounce{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-5px);opacity:1}}
+@keyframes genPulse{0%,100%{box-shadow:0 0 0 0 rgba(240,152,10,0)}50%{box-shadow:0 0 0 3px rgba(240,152,10,.2)}}
+@keyframes shimmer{to{transform:translateX(100%)}}
+@keyframes thoughtIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Layout shells ──────────────────────────────────── */
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.main-row{flex:1;display:flex;overflow:hidden}
+.gallery{display:flex;height:100vh;overflow:hidden;animation:fadeIn .4s ease}
+
+/* ── Gallery left panel ─────────────────────────────── */
+.g-left{width:310px;flex-shrink:0;background:#0a0c12;display:flex;flex-direction:column;justify-content:space-between;padding:52px 42px;border-right:1px solid #1a1e2a}
+.g-wordmark{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#f0980a;margin-bottom:14px}
+.g-title{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;line-height:1.02;color:#f0ece4;letter-spacing:-.5px}
+.g-title em{color:#f0980a;font-style:normal}
+.g-sub{font-family:'DM Mono',monospace;font-size:10.5px;color:#4b5563;line-height:1.8;margin-top:18px}
+.g-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+.g-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:20px;border:1px solid #1a1e2a;color:#374151}
+.g-foot{font-family:'DM Mono',monospace;font-size:8.5px;color:#1f2937;line-height:1.7}
+
+/* ── Gallery right ──────────────────────────────────── */
+.g-right{flex:1;overflow-y:auto;padding:48px 52px;background:#f7f5f0}
+.g-section{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:#a39880;margin-bottom:18px}
+.template-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:44px}
+.tmpl-card{background:#fff;border:1.5px solid rgba(0,0,0,.07);border-radius:13px;overflow:hidden;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.05);transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s}
+.tmpl-card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(0,0,0,.12)}
+.tmpl-preview{height:148px;padding:16px;display:flex;flex-direction:column;gap:5px}
+.tmpl-info{padding:13px 16px;border-top:1px solid rgba(0,0,0,.06)}
+.tmpl-name{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#17160d;margin-bottom:3px}
+.tmpl-desc{font-family:'DM Mono',monospace;font-size:9.5px;color:#a39880;margin-bottom:8px}
+.tmpl-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid;font-weight:500}
+.recent-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border:1px solid rgba(0,0,0,.07);border-radius:9px;cursor:pointer;margin-bottom:7px;transition:all .15s}
+.recent-item:hover{border-color:rgba(0,0,0,.14);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.recent-title{font-family:'DM Mono',monospace;font-size:11px;color:#17160d}
+.recent-meta{font-family:'DM Mono',monospace;font-size:9px;color:#a39880;margin-top:2px}
+.empty-state{font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#a39880;text-align:center;padding:28px 0}
+
+/* ── Toolbar ────────────────────────────────────────── */
+.toolbar{height:48px;display:flex;align-items:center;padding:0 14px;gap:6px;flex-shrink:0;border-bottom:1px solid rgba(0,0,0,.07);background:rgba(247,245,240,.97);backdrop-filter:blur(16px);z-index:20}
+.tb-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#17160d;letter-spacing:-.3px;background:none;border:none;margin-right:4px}
+.tb-logo em{color:#b8720e;font-style:normal}
+.tb-sep{width:1px;height:20px;background:rgba(0,0,0,.08);margin:0 2px;flex-shrink:0}
+.tb-title{flex:1;max-width:260px;background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:11px;color:#17160d;padding:4px 8px;border-radius:5px;transition:background .15s}
+.tb-title:hover,.tb-title:focus{background:rgba(0,0,0,.04)}
+.tbtn{height:28px;padding:0 10px;border:1px solid rgba(0,0,0,.09);border-radius:6px;background:#fff;font-family:'DM Mono',monospace;font-size:10px;color:#6a6254;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.tbtn:hover{background:#f0ede7;color:#17160d;border-color:rgba(0,0,0,.15)}
+.tbtn.on{background:#17160d;color:#fff;border-color:transparent}
+.tbtn.primary{background:#17160d;color:#fff;border-color:transparent}
+.tbtn.primary:hover{background:#2a2820}
+.tbtn.danger{background:#fff1f2;border-color:#fca5a5;color:#b91c1c}
+.tbtn.danger:hover{background:#b91c1c;color:#fff}
+.tbtn.gen{animation:genPulse 1.8s infinite}
+.tb-spacer{flex:1}
+.model-badge{display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;border:1px solid;flex-shrink:0}
+.model-badge.kimi{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.model-badge.ds{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+.model-badge.qw{background:#fdf4ff;border-color:#e9d5ff;color:#7c3aed}
+.model-badge.fx{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.mb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.mb-dot.live{animation:pulse 1s infinite}
+
+/* ── Outline ────────────────────────────────────────── */
+.outline{width:210px;flex-shrink:0;background:#f7f5f0;border-right:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden}
+.panel-head{padding:11px 14px 8px;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#a39880;border-bottom:1px solid rgba(0,0,0,.05);flex-shrink:0}
+.outline-list{flex:1;overflow-y:auto;padding:5px 0}
+.ol-item{padding:5px 14px;font-family:'DM Mono',monospace;font-size:10px;color:#6a6254;cursor:pointer;border-left:2px solid transparent;transition:all .12s;line-height:1.4}
+.ol-item:hover{color:#17160d;background:rgba(0,0,0,.022)}
+.ol-item.active{color:#2457d4;border-left-color:#2457d4;background:rgba(36,87,212,.045)}
+.ol-item.h2{padding-left:22px;font-size:9.5px}
+.ol-item.h3{padding-left:30px;font-size:9px;color:#a39880}
+
+/* ── Editor canvas ──────────────────────────────────── */
+.editor-scroll{flex:1;overflow-y:auto;padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.hm-legend{width:100%;max-width:724px;display:flex;align-items:center;gap:14px;padding:7px 14px;background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.07);border-radius:8px 8px 0 0;margin-bottom:-4px;font-family:'DM Mono',monospace;font-size:9px;flex-wrap:wrap;display:none}
+.hm-legend.visible{display:flex}
+.hm-dot{width:8px;height:8px;border-radius:2px}
+.page{width:100%;max-width:724px;min-height:1040px;background:#fff;box-shadow:0 2px 24px rgba(0,0,0,.06),0 1px 4px rgba(0,0,0,.04);border-radius:2px;padding:80px 88px 68px;position:relative;animation:fadeUp .45s ease}
+.page-num{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:#a39880}
+
+/* ── Document typography ────────────────────────────── */
+.doc-main-title{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;line-height:1.2;letter-spacing:-.3px;color:#17160d;margin-bottom:6px}
+.doc-authors{font-family:'DM Mono',monospace;font-size:10px;color:#6a6254;margin-bottom:20px;line-height:1.6}
+.doc-abstract-lbl{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#a39880;margin-bottom:7px}
+.doc-abstract{font-size:14px;line-height:1.7;color:#6a6254;font-style:italic;padding:13px;background:rgba(0,0,0,.018);border-left:2px solid rgba(0,0,0,.08);margin-bottom:24px}
+.doc-divider{height:1px;background:rgba(0,0,0,.07);margin:0 0 24px}
+.doc-h1{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;letter-spacing:-.2px;color:#17160d;margin:28px 0 11px;scroll-margin-top:20px}
+.doc-h2{font-family:'Cormorant Garamond',serif;font-size:14.5px;font-weight:500;font-style:italic;color:#17160d;margin:20px 0 8px;scroll-margin-top:20px}
+.doc-p{font-size:14.5px;line-height:1.76;color:#231e12;margin-bottom:13px;cursor:pointer;border-radius:0 3px 3px 0;padding:2px 4px;transition:background .2s,border .2s,padding .2s,margin .2s}
+.doc-p:hover{background:rgba(0,0,0,.018)}
+.doc-p.selected{background:rgba(36,87,212,.05);outline:1px solid rgba(36,87,212,.15);outline-offset:2px;border-radius:3px}
+
+/* Heatmap coloring */
+.hm .doc-p.src-orig{background:rgba(36,87,212,.055);border-left:2.5px solid rgba(36,87,212,.3);padding-left:9px;margin-left:-12px}
+.hm .doc-p.src-rag{background:rgba(4,120,87,.055);border-left:2.5px solid rgba(4,120,87,.3);padding-left:9px;margin-left:-12px}
+.hm .doc-p.src-flag{background:rgba(200,30,30,.055);border-left:2.5px solid rgba(200,30,30,.3);padding-left:9px;margin-left:-12px}
+
+/* Ghost text */
+.ghost-span{color:rgba(36,87,212,.68);font-style:italic;border-bottom:1px dashed rgba(36,87,212,.38)}
+.ghost-bar{display:flex;align-items:center;gap:8px;margin:-4px 0 12px;padding:5px 0;animation:slideUp .2s ease}
+.ghost-btn{padding:3px 10px;border-radius:4px;font-family:'DM Mono',monospace;font-size:9.5px;cursor:pointer;border:1px solid;transition:all .15s}
+.ghost-btn.acc{background:#ecfdf5;border-color:#6ee7b7;color:#065f46}
+.ghost-btn.acc:hover{background:#065f46;color:#fff;border-color:#065f46}
+.ghost-btn.rej{background:#fff1f2;border-color:#fda4af;color:#9f1239}
+.ghost-btn.rej:hover{background:#9f1239;color:#fff;border-color:#9f1239}
+.ghost-model{font-family:'DM Mono',monospace;font-size:9px;color:#a39880}
+.ghost-hint{font-family:'DM Mono',monospace;font-size:9px;color:#a39880;margin-left:auto}
+
+/* Verification badges */
+.vbadge{display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;border-radius:50%;font-size:7.5px;font-weight:700;cursor:pointer;margin-left:1.5px;vertical-align:super;transition:transform .15s;border:1px solid;font-family:'DM Mono',monospace;text-decoration:none}
+.vbadge:hover{transform:scale(1.4)}
+.vbadge.ok{background:#ecfdf5;border-color:#34d399;color:#065f46}
+.vbadge.warn{background:#fef3c7;border-color:#fbbf24;color:#92400e}
+.vbadge.err{background:#fff1f2;border-color:#fb7185;color:#9f1239}
+
+/* Figure block */
+.fig-block{border:1.5px dashed rgba(0,0,0,.1);border-radius:8px;padding:20px;margin:16px 0;background:rgba(0,0,0,.007);text-align:center}
+.fig-ph{display:flex;flex-direction:column;align-items:center;gap:7px}
+.fig-ph-icon{font-size:26px;opacity:.25}
+.fig-ph-lbl{font-family:'DM Mono',monospace;font-size:10px;color:#a39880}
+.fig-ph-cap{font-family:'DM Mono',monospace;font-size:9.5px;color:#a39880;font-style:italic;margin-bottom:8px}
+.fig-gen-btn{padding:5px 14px;background:#fff7ed;border:1px solid #fed7aa;color:#c2410c;border-radius:6px;font-family:'DM Mono',monospace;font-size:10px;transition:all .15s}
+.fig-gen-btn:hover{background:#c2410c;color:#fff}
+.fig-caption{font-family:'DM Mono',monospace;font-size:9.5px;color:#6a6254;font-style:italic;margin-top:10px}
+.stream-para{font-size:14.5px;line-height:1.76;color:rgba(36,87,212,.68);font-style:italic;border-left:2.5px solid rgba(36,87,212,.3);padding-left:9px;margin-left:-12px;background:rgba(36,87,212,.04);margin-bottom:13px;border-radius:0 3px 3px 0}
+.typing-dots{display:inline-flex;gap:3px;align-items:center;margin-left:4px}
+.td{width:4px;height:4px;border-radius:50%;background:#f0980a}
+.td:nth-child(1){animation:dotBounce 1.2s 0s infinite}
+.td:nth-child(2){animation:dotBounce 1.2s .2s infinite}
+.td:nth-child(3){animation:dotBounce 1.2s .4s infinite}
+
+/* ── Sidebar ────────────────────────────────────────── */
+.sidebar{width:360px;flex-shrink:0;background:#0a0c12;border-left:1px solid #1a1e2a;display:flex;flex-direction:column;overflow:hidden}
+.sb-tabs{display:flex;border-bottom:1px solid #1a1e2a;flex-shrink:0}
+.sb-tab{flex:1;padding:10px 6px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#374151;cursor:pointer;border-bottom:2px solid transparent;transition:all .18s}
+.sb-tab:hover{color:#6b7280}
+.sb-tab.active{color:#f0980a;border-bottom-color:#f0980a}
+.thought-stream{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px}
+.thought-entry{border-radius:7px;padding:9px 11px;font-family:'DM Mono',monospace;font-size:10.5px;line-height:1.55;border:1px solid;animation:thoughtIn .28s ease}
+.te-kimi{background:rgba(36,87,212,.07);border-color:rgba(36,87,212,.14)}
+.te-ds{background:rgba(4,120,87,.07);border-color:rgba(4,120,87,.14)}
+.te-qw{background:rgba(109,40,217,.07);border-color:rgba(109,40,217,.14)}
+.te-fx{background:rgba(194,65,12,.07);border-color:rgba(194,65,12,.14)}
+.te-sys{background:rgba(255,255,255,.025);border-color:rgba(255,255,255,.06)}
+.te-usr{background:rgba(240,152,10,.07);border-color:rgba(240,152,10,.14)}
+.te-tag{display:flex;align-items:center;gap:5px;font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:5px}
+.te-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.te-kimi .te-tag{color:#60a5fa}
+.te-ds .te-tag{color:#34d399}
+.te-qw .te-tag{color:#a78bfa}
+.te-fx .te-tag{color:#fb923c}
+.te-sys .te-tag{color:#4b5563}
+.te-usr .te-tag{color:#f0980a}
+.te-text{color:#94a3b8}
+.te-cite{margin-top:5px;padding:3px 8px;background:rgba(255,255,255,.03);border-radius:4px;font-size:9px;color:#374151;border-left:2px solid #f0980a}
+.te-time{margin-left:auto;font-size:8px;color:#374151;font-weight:400}
+.te-replay{background:none;border:none;color:#374151;font-size:11px;line-height:1;padding:0 2px;transition:color .15s}
+.te-replay:hover{color:#94a3b8}
+.gen-indicator{display:flex;align-items:center;gap:6px;padding:8px 11px;font-family:'DM Mono',monospace;font-size:9.5px;color:#f0980a}
+/* Sidebar input */
+.sb-input-area{padding:10px;border-top:1px solid #1a1e2a;flex-shrink:0}
+.sb-hint{font-family:'DM Mono',monospace;font-size:8.5px;color:#374151;margin-bottom:7px}
+.sb-input-wrap{display:flex;align-items:flex-end;gap:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:7px 10px;position:relative}
+.sb-input{flex:1;background:none;border:none;outline:none;font-family:'DM Mono',monospace;font-size:10.5px;color:#e2e8f0;resize:none;min-height:18px;max-height:76px;line-height:1.5}
+.sb-input::placeholder{color:#374151}
+.sb-send{width:26px;height:26px;border-radius:6px;background:#f0980a;border:none;display:flex;align-items:center;justify-content:center;color:#1a1810;font-size:12px;flex-shrink:0;transition:all .15s}
+.sb-send:hover{background:#d97706}
+.sb-send:disabled{opacity:.4}
+/* Mention dropdown */
+.mention-drop{position:absolute;bottom:calc(100% + 6px);left:-10px;right:-10px;background:#111622;border:1px solid #1a1e2a;border-radius:9px;overflow:hidden;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:slideUp .15s}
+.mention-item{width:100%;display:flex;align-items:center;gap:10px;padding:8px 14px;background:none;border:none;text-align:left;transition:background .12s}
+.mention-item:hover{background:rgba(255,255,255,.05)}
+.mention-name{font-family:'DM Mono',monospace;font-size:10px;font-weight:600}
+.mention-role{font-family:'DM Mono',monospace;font-size:9px;color:#4b5563}
+/* Context librarian */
+.drop-zone{margin:12px;border:1.5px dashed rgba(255,255,255,.12);border-radius:10px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.02)}
+.drop-zone:hover,.drop-zone.over{border-color:rgba(240,152,10,.45);background:rgba(240,152,10,.04)}
+.drop-icon{font-size:22px;margin-bottom:8px;opacity:.4}
+.drop-text{font-family:'DM Mono',monospace;font-size:10px;color:#4b5563;line-height:1.65}
+.lib-section{font-family:'DM Mono',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;color:#374151;padding:10px 14px 6px}
+.ref-card{margin:3px 10px;padding:9px 12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:6px;cursor:pointer;transition:all .15s}
+.ref-card:hover{background:rgba(255,255,255,.048)}
+.ref-name{font-family:'DM Mono',monospace;font-size:9.5px;color:#94a3b8;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-meta{font-family:'DM Mono',monospace;font-size:9px;color:#374151}
+.ref-chunks{margin-left:7px;padding:1px 5px;border-radius:10px;background:rgba(240,152,10,.1);border:1px solid rgba(240,152,10,.18);color:#f0980a;font-size:8px}
+.ingest-card{margin:3px 10px;padding:9px 12px;background:rgba(240,152,10,.06);border:1px solid rgba(240,152,10,.15);border-radius:6px}
+.ingest-name{font-family:'DM Mono',monospace;font-size:9.5px;color:#94a3b8;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ingest-stage{font-family:'DM Mono',monospace;font-size:9px;color:#4b5563;margin-bottom:5px}
+.ingest-bar{height:2px;background:rgba(255,255,255,.06);border-radius:1px;overflow:hidden}
+.ingest-fill{height:100%;background:#f0980a;border-radius:1px;transition:width .4s ease}
+.web-result{margin:3px 10px;padding:8px 11px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:5px}
+.web-title{font-family:'DM Mono',monospace;font-size:9px;color:#60a5fa;margin-bottom:3px}
+.web-meta{font-family:'DM Mono',monospace;font-size:8px;color:#1f2937}
+
+/* ── Status bar ─────────────────────────────────────── */
+.status-bar{height:22px;display:flex;align-items:center;padding:0 14px;gap:12px;border-top:1px solid rgba(0,0,0,.06);background:#f7f5f0;font-family:'DM Mono',monospace;font-size:9px;color:#a39880;flex-shrink:0}
+.status-dot{color:rgba(0,0,0,.15)}
+
+/* ── Modals ─────────────────────────────────────────── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.38);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s}
+.modal-box{background:#fff;border-radius:15px;padding:28px;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#17160d;margin-bottom:4px}
+.modal-sub{font-family:'DM Mono',monospace;font-size:10px;color:#6a6254;margin-bottom:22px}
+.pivot-opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid rgba(0,0,0,.08);border-radius:10px;cursor:pointer;transition:all .18s;background:#fff;margin-bottom:8px;width:100%;text-align:left}
+.pivot-opt:hover{border-color:rgba(0,0,0,.17);box-shadow:0 2px 12px rgba(0,0,0,.06);transform:translateY(-1px)}
+.pivot-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.pivot-label{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#17160d;margin-bottom:2px}
+.pivot-desc{font-family:'DM Mono',monospace;font-size:9.5px;color:#6a6254;line-height:1.45}
+.model-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.model-chip{padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace;font-size:9.5px;cursor:pointer;border:1px solid;transition:opacity .12s}
+.model-chip:hover{opacity:.7}
+/* Settings */
+.settings-tabs{display:flex;gap:5px;margin-bottom:22px}
+.stab{padding:5px 12px;border-radius:5px;font-family:'DM Mono',monospace;font-size:9.5px;cursor:pointer;border:1px solid rgba(0,0,0,.08);background:#fff;color:#6a6254;transition:all .12s}
+.stab.active{background:#17160d;color:#fff;border-color:transparent}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-family:'DM Mono',monospace;font-size:9.5px;color:#6a6254;margin-bottom:5px}
+.form-select,.form-input{width:100%;padding:7px 10px;border:1px solid rgba(0,0,0,.1);border-radius:7px;font-family:'DM Mono',monospace;font-size:10.5px;color:#17160d;background:#fff;outline:none;transition:border-color .15s}
+.form-select:focus,.form-input:focus{border-color:#2457d4}
+.form-row{display:flex;gap:12px}
+.form-row .form-group{flex:1}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.toggle-label{font-family:'DM Mono',monospace;font-size:10px;color:#6a6254}
+.toggle{width:34px;height:18px;border-radius:9px;background:#e5e7eb;position:relative;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.toggle.on{background:#059669}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:7px;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{transform:translateX(16px)}
+.save-btn{width:100%;padding:10px;background:#17160d;color:#fff;border:none;border-radius:9px;font-family:'DM Mono',monospace;font-size:11px;margin-top:16px;transition:background .15s}
+.save-btn:hover{background:#2a2820}
+/* Verify panel */
+.verify-panel{position:fixed;bottom:36px;right:20px;z-index:150;width:320px;background:#111622;border:1px solid #1a1e2a;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.35);animation:slideUp .2s ease}
+.vp-head{padding:11px 14px;border-bottom:1px solid #1a1e2a;display:flex;align-items:center;justify-content:space-between}
+.vp-title{font-family:'DM Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:#f0980a}
+.vp-close{background:none;border:none;color:#4b5563;font-size:13px;line-height:1}
+.vp-body{padding:12px 14px}
+.vp-src{font-family:'DM Mono',monospace;font-size:9.5px;font-weight:600;color:#94a3b8;margin-bottom:9px}
+.vp-quote{font-family:'EB Garamond',serif;font-size:13px;color:#6b7280;font-style:italic;padding:8px 10px;background:rgba(240,152,10,.07);border-left:2px solid #f0980a;border-radius:0 4px 4px 0;line-height:1.65}
+/* Replay modal */
+.replay-modal{background:#111622;border:1px solid #1a1e2a;border-radius:14px;width:520px;max-height:75vh;overflow:hidden;display:flex;flex-direction:column;animation:popIn .28s cubic-bezier(.34,1.56,.64,1)}
+.replay-head{padding:12px 16px;border-bottom:1px solid #1a1e2a;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.replay-title{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#f0980a}
+.replay-sub{font-family:'DM Mono',monospace;font-size:9px;color:#4b5563;margin-top:2px}
+.replay-prog-track{height:2px;background:rgba(255,255,255,.05);flex-shrink:0}
+.replay-prog-fill{height:100%;background:#f0980a;transition:width .5s ease}
+.replay-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.export-btn{font-family:'DM Mono',monospace;font-size:9px;padding:4px 10px;background:rgba(255,255,255,.05);border:1px solid #1a1e2a;color:#94a3b8;border-radius:6px}
+.export-btn:hover{background:rgba(255,255,255,.1)}
+/* Notification */
+.notif{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(80px);background:#17160d;color:#fff;padding:8px 18px;border-radius:8px;font-family:'DM Mono',monospace;font-size:10.5px;z-index:300;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.22)}
+.notif.show{transform:translateX(-50%) translateY(0)}
+
+/* ── Inline SVG figure ──────────────────────────────── */
+.fig-svg-wrap{display:flex;justify-content:center}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback,useMemo,useReducer} = React;
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+const TEMPLATES = [
+  {id:"ieee",name:"IEEE Standard",desc:"Double column · Numbered sections",badge:"IEEE",color:"#2457d4",bg:"linear-gradient(135deg,#eff4ff 0%,#dde7ff 100%)"},
+  {id:"nature",name:"Nature Journal",desc:"Single column · Large figures",badge:"Nature",color:"#047857",bg:"linear-gradient(135deg,#f0fdf8 0%,#d7f5e8 100%)"},
+  {id:"apa",name:"APA Thesis",desc:"Double spaced · Chapter headers",badge:"APA",color:"#b45309",bg:"linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%)"},
+  {id:"blank",name:"Blank Canvas",desc:"Start from scratch",badge:"Blank",color:"#6b7280",bg:"linear-gradient(135deg,#f9f9f7 0%,#efefe9 100%)"},
+];
+
+const MODEL_OPTS = [
+  {key:"kimi-k2.5",cls:"kimi",label:"Kimi K2.5",role:"Lead Synthesis",color:"#60a5fa",chipBg:"#eff6ff",chipBorder:"#bfdbfe",chipColor:"#1d4ed8"},
+  {key:"deepseek-ai/deepseek-v3.2",cls:"ds",label:"DeepSeek V3.2",role:"Auditor",color:"#34d399",chipBg:"#f0fdf4",chipBorder:"#bbf7d0",chipColor:"#15803d"},
+  {key:"qwen/qwen3.5-397b-a17b",cls:"qw",label:"Qwen 3.5",role:"Logic Verifier",color:"#a78bfa",chipBg:"#fdf4ff",chipBorder:"#e9d5ff",chipColor:"#7c3aed"},
+  {key:"flux",cls:"fx",label:"@Flux",role:"Visual Designer",color:"#fb923c",chipBg:"#fff7ed",chipBorder:"#fed7aa",chipColor:"#c2410c"},
+];
+
+const MENTION_LIST = [
+  {key:"kimi",label:"@Kimi",role:"Lead Synthesis",color:"#60a5fa"},
+  {key:"ds",label:"@DeepSeek",role:"Scientific Auditor",color:"#34d399"},
+  {key:"qw",label:"@Qwen",role:"Logic Verifier",color:"#a78bfa"},
+  {key:"fx",label:"@Flux",role:"Visual Designer",color:"#fb923c"},
+];
+
+const SECTIONS = [
+  {id:"abstract",label:"Abstract",level:0},
+  {id:"intro",label:"1. Introduction",level:1},
+  {id:"bg",label:"1.1 Background",level:2},
+  {id:"rw",label:"1.2 Related Work",level:2},
+  {id:"meth",label:"2. Methodology",level:1},
+  {id:"arch",label:"2.1 Neural Decoder",level:2},
+  {id:"train",label:"2.2 Training Protocol",level:2},
+  {id:"res",label:"3. Results",level:1},
+  {id:"bench",label:"3.1 Benchmarks",level:2},
+  {id:"abl",label:"3.2 Ablation Study",level:2},
+  {id:"disc",label:"4. Discussion",level:1},
+  {id:"conc",label:"5. Conclusion",level:1},
+  {id:"refs",label:"References",level:1},
+];
+
+const DEMO_PARA = [
+  {id:"p1",sec:"intro",src:"src-rag",text:"The realization of practical quantum computation at scale demands a fundamental rethinking of error correction paradigms. Classical fault tolerance, derived from the von Neumann redundancy model, assumes discrete, well-characterized failure modes. Quantum systems, however, exhibit continuous error manifolds arising from environmental decoherence, introducing a complexity that resists classical treatment.",badges:[{at:0.62,status:"ok",title:"Verified",src:"von Neumann (1956)",quote:"Probabilistic logics and the synthesis of reliable organisms from unreliable components. Automata Studies 34:43–98."}]},
+  {id:"p2",sec:"bg",src:"src-orig",text:"Recent advances in topological quantum codes — particularly the surface code and color codes — have demonstrated remarkable theoretical thresholds. However, practical implementation is constrained by the polynomial overhead of syndrome measurement circuits and the latency bottleneck of classical decoding pipelines, which must operate within the coherence window of physical qubits.",badges:[{at:0.38,status:"ok",title:"Verified",src:"Kitaev (2003)",quote:"Fault-tolerant quantum computation by anyons. Annals of Physics 303(1):2–30."},{at:0.48,status:"ok",title:"Verified",src:"Bombin & Martin-Delgado (2007)",quote:"Topological quantum distillation. PRL 97, 180501."}]},
+  {id:"p3",sec:"rw",src:"src-flag",isGhost:true,text:"This work introduces a hierarchical syndrome decoding framework wherein a neural network ensemble — trained on simulated Pauli error channels of varying intensity — provides sub-microsecond decoding decisions. The ensemble leverages a transformer-based architecture pre-conditioned on topological graph representations of the qubit lattice.",badges:[{at:0,status:"warn",title:"Partial Verification",src:"Internal Analysis",quote:"Generalization claim requires ablation data on XZZX codes specifically designed for biased noise. Flag for §3.2."}]},
+  {id:"p4",sec:"arch",src:"src-rag",text:"Our decoder, termed TopoNet-7, processes the syndrome graph as a message-passing neural network. Each vertex v ∈ Vₛ corresponds to a stabilizer measurement outcome, and edges encode spatial adjacency on the lattice. The network propagates belief messages across three aggregation layers before emitting a binary error-correction decision vector aligned with the Pauli group.",badges:[]},
+  {id:"p5",sec:"arch",src:"src-orig",text:"The architecture employs rotary position embeddings (RoPE) adapted for 2D lattice coordinates, replacing the standard sinusoidal encoding. This allows the model to generalize to arbitrary lattice sizes during inference without positional out-of-distribution artifacts — a critical property for adaptive code distance selection.",badges:[{at:0.42,status:"ok",title:"Verified",src:"Su et al. (2022) RoFormer",quote:"Enhanced transformer with rotary position embedding. Neurocomputing 568:127063."}]},
+  {id:"p6",sec:"train",src:"src-rag",text:"Models were trained on a cluster of 64 NVIDIA H100 SXM5 GPUs using AdamW with a cosine annealing schedule, base LR 3 × 10⁻⁴ with 2,000-step linear warmup. Training data was generated via Monte Carlo simulation of the depolarizing channel with p ∈ [0.001, 0.015], producing 2.4 × 10⁷ syndrome–correction pairs validated against the Stim simulation framework.",badges:[{at:0.7,status:"warn",title:"Partial",src:"Internal",quote:"Dataset size sufficient at d≤13 but may require augmentation at d=15."},{at:0.88,status:"ok",title:"Verified",src:"Gidney (2021) Stim",quote:"A fast stabilizer circuit simulator. Quantum 5:497."}]},
+  {id:"p7",sec:"bench",src:"src-rag",text:"Against the MWPM baseline, TopoNet-7 achieves a 12.3× reduction in logical error rate at p = 0.005 for d = 9, and an 8.7× improvement at the threshold boundary p = 0.0087. Decoding latency averages 0.31 μs on an NVIDIA A100 inference server — well within the coherence window of superconducting transmon qubits (~100 μs).",badges:[{at:0.28,status:"ok",title:"Verified",src:"Internal Benchmark",quote:"95% CI ±0.4× at d=9. Compared against PyMatching v2.2.1 with full connectivity. Seed 42."}]},
+  {id:"p8",sec:"bench",src:"src-flag",text:"The comparative advantage of TopoNet-7 narrows under asymmetric noise models. For Z-biased Pauli channels (η = 100), the performance gap reduces to approximately 3.2×, reflecting the model's training distribution bias toward symmetric depolarizing noise. This limitation is addressed in §3.2.",badges:[{at:0,status:"err",title:"Unverified",src:"DeepSeek V3.2 Flag",quote:"Comparison to cat-qubit architectures not supported by RAG corpus. High-uncertainty flag assigned. Recommend adding Grimm et al. (2020)."}]},
+  {id:"p9",sec:"abl",src:"src-orig",text:"Systematic ablation reveals that the RoPE positional encoding contributes 34% of the total logical error rate improvement, with the remaining 66% attributable to graph-structured message-passing layers. Removing either component independently degrades performance to within 2× of the MWPM baseline, confirming their synergistic interaction.",badges:[{at:0.52,status:"ok",title:"Verified",src:"Ablation Study (Internal)",quote:"3 independent runs, seed 42, 95% CI ±1.8% on attribution percentages."}]},
+  {id:"p10",sec:"disc",src:"src-orig",text:"The empirical results establish TopoNet-7 as a viable replacement for MWPM in near-term fault-tolerant architectures operating at physical error rates below 0.7%. The sub-microsecond decoding latency is achievable on commodity GPU inference hardware, suggesting a practical deployment pathway without requiring custom ASIC development.",badges:[]},
+  {id:"p11",sec:"conc",src:"src-rag",text:"We have presented TopoNet-7, a neural syndrome decoder for topological quantum error correction that achieves state-of-the-art logical error rates with sub-microsecond decoding latency. The combination of graph-structured message passing and RoPE-adapted positional encoding provides a robust framework that generalizes across code distances and noise intensities within the depolarizing channel family.",badges:[]},
+];
+
+const REFS = [
+  {id:"r1",filename:"Fowler_2012_surface_codes.pdf",title:"Fowler et al. (2012)",chunks:31},
+  {id:"r2",filename:"Preskill_2018_NISQ.pdf",title:"Preskill (2018)",chunks:22},
+  {id:"r3",filename:"Su_2022_RoPE.pdf",title:"Su et al. (2022) RoFormer",chunks:18},
+  {id:"r4",filename:"Gidney_2021_Stim.pdf",title:"Gidney (2021) Stim",chunks:14},
+  {id:"r5",filename:"Google_QAI_2023.pdf",title:"Google Quantum AI (2023)",chunks:27},
+];
+
+const WEB_RESULTS = [
+  {title:"Neural decoders for topological quantum codes",src:"arxiv.org",yr:2024},
+  {title:"Threshold analysis of surface codes under realistic noise",src:"nature.com",yr:2024},
+  {title:"MWPM decoder performance benchmarks at scale",src:"pubmed.gov",yr:2023},
+  {title:"Machine learning approaches to quantum error correction",src:"arxiv.org",yr:2023},
+];
+
+const INITIAL_THOUGHTS = [
+  {id:"t0",ts:new Date(),model:"sys",role:"NEXUS ORCHESTRATOR",content:"Session initialized. RAG index loaded with 5 reference documents. Active model: kimi-k2.5. Peer reviewers on standby: deepseek-v3.2, qwen3.5-397b.",citation:null},
+  {id:"t1",ts:new Date(),model:"kimi",role:"KIMI K2.5 · LEAD ARCHITECT",content:"Analyzing document structure. §1–§3 narrative coherent. Detected underexplored connection between §1.2 LDPC codes and §2.1 graph neural architecture — flagging for synthesis pass.",citation:"Citing: Leverrier et al. (2022) §3.2"},
+  {id:"t2",ts:new Date(),model:"ds",role:"DEEPSEEK V3.2 · AUDITOR",content:"Auditing §3.1 claims. The 12× improvement figure requires explicit baseline specification. Assigning High-Uncertainty tag. Cross-referencing with Google QAI (2023) benchmark data.",citation:"Flagged: '12× improvement' — comparator not in RAG corpus"},
+  {id:"t3",ts:new Date(),model:"qw",role:"QWEN 3.5 · LOGIC VERIFIER",content:"Examining statistical validity of Monte Carlo parameters. N = 2.4×10⁷ samples sufficient for p-value < 0.001 given the observed effect size. Methodology is statistically sound.",citation:null},
+];
+
+const STREAM_TEXTS = {
+  default:"Validation was performed on a held-out test set of 1.2 × 10⁶ syndrome instances, stratified across code distances d ∈ {5, 7, 9, 11, 13}. Early stopping was applied with a patience window of 15 epochs, monitored on validation logical error rate rather than cross-entropy loss — reflecting the asymmetric cost structure of quantum error correction, where false negatives carry exponentially higher penalty than false positives.",
+  deepseek:"Scientific audit complete. The 12× improvement metric holds under symmetric depolarizing noise (verified against Fowler et al. §4.2, 95% CI ±0.4×). For Z-biased Pauli channels (η > 1), however, the XZZX surface code with bias-aware MWPM remains the more empirically supported baseline. This limitation should be prominently disclosed in any deployment documentation targeting cat-qubit architectures.",
+  qwen:"Logic verification complete. Argument structure is internally consistent. The causal claim in §2.1 linking rotary embeddings to generalization is supported by cited ablation data (§3.2). One qualification: the phrase 'without explicit retraining' in §1.2 is broader than empirically demonstrated — recommend qualifying to 'within the depolarizing channel family, for p ∈ [0.001, 0.015]'.",
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+let thoughtCounter = 10;
+const mkThought = (model, role, content, citation=null) => ({
+  id:`t${++thoughtCounter}`,ts:new Date(),model,role,content,citation
+});
+
+function useNotif() {
+  const [state,setState] = useState({msg:"",show:false});
+  const t = useRef(null);
+  const notify = useCallback((msg) => {
+    setState({msg,show:true});
+    clearTimeout(t.current);
+    t.current = setTimeout(()=>setState(s=>({...s,show:false})),2600);
+  },[]);
+  return {...state,notify};
+}
+
+function TS() {
+  return new Date().toLocaleTimeString("en-US",{hour12:false,hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+
+// ── SVG Figure ────────────────────────────────────────────────────────────────
+function SurfaceFig() {
+  const sz=7,cs=34,off=14;
+  const edges=[],circles=[];
+  for(let r=0;r<sz;r++) for(let c=0;c<sz;c++){
+    const x=off+c*cs,y=off+r*cs;
+    if(c<sz-1) edges.push(`M${x},${y}L${x+cs},${y}`);
+    if(r<sz-1) edges.push(`M${x},${y}L${x},${y+cs}`);
+    circles.push({x,y,stab:(r+c)%2===0});
+  }
+  const lbls=[{r:1,c:1,l:"A"},{r:1,c:5,l:"B"},{r:5,c:1,l:"C"},{r:5,c:5,l:"D"}];
+  return (
+    <div className="fig-svg-wrap">
+      <svg viewBox="0 0 260 265" style={{width:"100%",maxWidth:280,background:"#f8fafc",borderRadius:6,border:"1px solid #e2e8f0"}}>
+        <path d={edges.join(" ")} stroke="#cbd5e1" strokeWidth="1.2" fill="none"/>
+        {circles.map(({x,y,stab},i)=>
+          <circle key={i} cx={x} cy={y} r={stab?8:5.5} fill={stab?"#1e3a5f":"#f0f4f8"} stroke={stab?"#4a90d9":"#94a3b8"} strokeWidth="1.5"/>
+        )}
+        {lbls.map(({r,c,l})=>
+          <text key={l} x={off+c*cs} y={off+r*cs-13} textAnchor="middle" fontFamily="monospace" fontSize="10" fill="#334155" fontWeight="600">{l}</text>
+        )}
+        <text x="130" y="257" textAnchor="middle" fontFamily="monospace" fontSize="8.5" fill="#64748b">Surface Code d=7 · Stabilizer Lattice</text>
+      </svg>
+    </div>
+  );
+}
+
+function ErrorRateFig() {
+  const w=360,h=200,pL=44,pT=16,pR=14,pB=36;
+  const cW=w-pL-pR,cH=h-pT-pB;
+  const dists=[5,7,9,11,13],cols=["#94a3b8","#60a5fa","#34d399","#f59e0b","#f87171"];
+  const paths=[],legs=[];
+  dists.forEach((d,i)=>{
+    const pts=[];
+    for(let j=0;j<=20;j++){
+      const p=0.001+j*0.0007;
+      const le=Math.max(-Math.pow(10,2-i*.55)*Math.pow(p/.01,d*.38)+.012,1e-9);
+      const x=pL+(p/.015)*cW;
+      const y=pT+cH*(1-Math.max(0,Math.min(1,(Math.log10(le)+9)/9)));
+      pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    }
+    paths.push(<polyline key={d} points={pts.join(" ")} fill="none" stroke={cols[i]} strokeWidth="1.8" opacity=".9"/>);
+    legs.push(<React.Fragment key={d}><rect x={pL+i*60} y={h-10} width="20" height="3" fill={cols[i]} rx="1"/><text x={pL+i*60+10} y={h-14} textAnchor="middle" fontSize="8" fill="#64748b" fontFamily="monospace">d={d}</text></React.Fragment>);
+  });
+  const thX=(pL+(0.0087/.015)*cW).toFixed(1);
+  return (
+    <div className="fig-svg-wrap">
+      <svg viewBox={`0 0 ${w} ${h}`} style={{width:"100%",background:"#f8fafc",borderRadius:6,border:"1px solid #e2e8f0"}}>
+        <line x1={pL} y1={pT} x2={pL} y2={pT+cH} stroke="#e2e8f0" strokeWidth="1"/>
+        <line x1={pL} y1={pT+cH} x2={pL+cW} y2={pT+cH} stroke="#e2e8f0" strokeWidth="1"/>
+        <line x1={thX} y1={pT} x2={thX} y2={pT+cH} stroke="#e11d48" strokeWidth="1" strokeDasharray="4,3" opacity=".7"/>
+        <text x={parseFloat(thX)+3} y={pT+12} fontSize="7.5" fill="#e11d48" fontFamily="monospace">p_th=0.87%</text>
+        <text x={pL/2} y={pT+cH/2} textAnchor="middle" transform={`rotate(-90,${pL/2},${pT+cH/2})`} fontSize="7.5" fill="#64748b" fontFamily="monospace">log L_err</text>
+        <text x={pL+cW/2} y={h-1} textAnchor="middle" fontSize="7.5" fill="#64748b" fontFamily="monospace">Physical error rate p</text>
+        {paths}{legs}
+      </svg>
+    </div>
+  );
+}
+
+// ── App root ──────────────────────────────────────────────────────────────────
+function App() {
+  const [view, setView] = useState("gallery");
+  const [template, setTemplate] = useState("ieee");
+  const [docTitle, setDocTitle] = useState("Untitled Research");
+  const {msg,show,notify} = useNotif();
+
+  const openDoc = (tmpl) => {
+    setTemplate(tmpl);
+    setDocTitle(tmpl==="ieee" ? "Topological Error Correction in Fault-Tolerant Quantum Computing" : "Untitled Research");
+    setView("editor");
+  };
+
+  return (
+    <>
+      {view==="gallery"
+        ? <Gallery onOpen={openDoc}/>
+        : <Editor template={template} docTitle={docTitle} onTitleChange={setDocTitle} onBack={()=>setView("gallery")} notify={notify}/>
+      }
+      <div className={`notif${show?" show":""}`}>{msg}</div>
+    </>
+  );
+}
+
+// ── Gallery ───────────────────────────────────────────────────────────────────
+function Gallery({onOpen}) {
+  const recent = useMemo(()=>{try{return JSON.parse(localStorage.getItem("orch_recent")||"[]");}catch{return [];}}, []);
+
+  return (
+    <div className="gallery">
+      <div className="g-left">
+        <div>
+          <div className="g-wordmark">Orchestra</div>
+          <h1 className="g-title">Research<br/><em>Studio</em></h1>
+          <p className="g-sub">Multi-agent AI authoring<br/>with RAG verification,<br/>live debate &amp; citation<br/>persistence.</p>
+          <div className="g-badges">
+            {["kimi-k2.5","deepseek-v3.2","qwen3.5","flux.2-klein"].map(m=><span key={m} className="g-badge">{m}</span>)}
+          </div>
+        </div>
+        <div className="g-foot">NVIDIA NIM · ChromaDB<br/>FastAPI · LangGraph · Tiptap</div>
+      </div>
+      <div className="g-right">
+        <div className="g-section">Choose a Template</div>
+        <div className="template-grid">
+          {TEMPLATES.map((t,i)=><TmplCard key={t.id} tmpl={t} delay={i*60} onClick={()=>onOpen(t.id)}/>)}
+        </div>
+        <div className="g-section">Recent Documents</div>
+        {recent.length===0
+          ? <div className="empty-state">Your research begins here.</div>
+          : recent.slice(0,5).map(d=>(
+            <div key={d.id} className="recent-item" onClick={()=>onOpen(d.template||"blank")}>
+              <span style={{fontSize:16}}>📄</span>
+              <div>
+                <div className="recent-title">{d.title}</div>
+                <div className="recent-meta">{(d.template||"blank").toUpperCase()} · {new Date(d.ts).toLocaleDateString()}</div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  );
+}
+
+function TmplCard({tmpl,delay,onClick}) {
+  return (
+    <div className="tmpl-card" onClick={onClick} style={{animationDelay:`${delay}ms`,animation:`fadeUp .45s ${delay}ms both`}}>
+      <div className="tmpl-preview" style={{background:tmpl.bg}}>
+        <TmplPreview id={tmpl.id} color={tmpl.color}/>
+      </div>
+      <div className="tmpl-info">
+        <div className="tmpl-name">{tmpl.name}</div>
+        <div className="tmpl-desc">{tmpl.desc}</div>
+        <span className="tmpl-badge" style={{borderColor:`${tmpl.color}40`,background:`${tmpl.color}12`,color:tmpl.color}}>{tmpl.badge}</span>
+      </div>
+    </div>
+  );
+}
+
+function TmplPreview({id,color}) {
+  if(id==="ieee") return (
+    <div style={{display:"flex",gap:8,flex:1}}>
+      {[0,1].map(c=><div key={c} style={{flex:1,display:"flex",flexDirection:"column",gap:4}}>
+        <div style={{height:7,borderRadius:2,background:`${color}50`,marginBottom:3}}/>
+        {[100,75,100,55,100,75,100].map((w,i)=><div key={i} style={{height:3.5,width:`${w}%`,borderRadius:1.5,background:"rgba(0,0,0,.08)"}}/>)}
+      </div>)}
+    </div>
+  );
+  if(id==="nature") return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",gap:5}}>
+      <div style={{height:8,width:"60%",margin:"0 auto 4px",borderRadius:2,background:`${color}55`}}/>
+      {[100,75,100].map((w,i)=><div key={i} style={{height:3.5,width:`${w}%`,borderRadius:1.5,background:"rgba(0,0,0,.08)"}}/>)}
+      <div style={{height:32,borderRadius:3,background:`${color}22`,margin:"3px 0"}}/>
+      {[100,60].map((w,i)=><div key={i} style={{height:3.5,width:`${w}%`,borderRadius:1.5,background:"rgba(0,0,0,.08)"}}/>)}
+    </div>
+  );
+  if(id==="apa") return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
+      {[100,100,75,null,100,100,100,62].map((w,i)=>w===null
+        ? <div key={i} style={{height:1,background:"rgba(0,0,0,.07)"}}/>
+        : <div key={i} style={{height:3.5,width:`${w}%`,borderRadius:1.5,background:"rgba(0,0,0,.08)"}}/>
+      )}
+    </div>
+  );
+  return <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center"}}><div style={{width:52,height:64,border:"2px solid rgba(0,0,0,.1)",borderRadius:2}}/></div>;
+}
+
+// ── Editor ─────────────────────────────────────────────────────────────────────
+function Editor({template,docTitle,onTitleChange,onBack,notify}) {
+  const [scrutiny,setScrutiny] = useState(false);
+  const [activeSection,setActiveSection] = useState("abstract");
+  const [sidebarTab,setSidebarTab] = useState(0);
+  const [thoughts,setThoughts] = useState(INITIAL_THOUGHTS);
+  const [generating,setGenerating] = useState(false);
+  const [streamText,setStreamText] = useState("");
+  const [ghosts,setGhosts] = useState([]);
+  const [figs,setFigs] = useState({});
+  const [genFigAnim,setGenFigAnim] = useState({});
+  const [selPara,setSelPara] = useState(null);
+  const [pivotOpen,setPivotOpen] = useState(false);
+  const [settingsOpen,setSettingsOpen] = useState(false);
+  const [verifyData,setVerifyData] = useState(null);
+  const [replayOpen,setReplayOpen] = useState(false);
+  const [modelChipsOpen,setModelChipsOpen] = useState(false);
+  const [currentModel,setCurrentModel] = useState({key:"kimi-k2.5",cls:"kimi"});
+  const [refs,setRefs] = useState(REFS);
+  const [ingestJobs,setIngestJobs] = useState([]);
+  const [wc,setWc] = useState(1642);
+  const [sidebarInput,setSidebarInput] = useState("");
+  const [mentionDrop,setMentionDrop] = useState(false);
+  const [config,setConfig] = useState({journal:"Nature",citation:"IEEE",field:"Quantum Computing",profile:"Academic/Formal",voice:"Third Person",rigor:9,requireCite:true,flagUnver:true,peerReview:true,hallu:"0.05"});
+
+  const streamIv = useRef(null);
+  const aborted = useRef(false);
+  const thoughtsEl = useRef(null);
+
+  // auto-scroll thoughts
+  useEffect(()=>{
+    if(thoughtsEl.current) thoughtsEl.current.scrollTop = thoughtsEl.current.scrollHeight;
+  },[thoughts]);
+
+  // save recent
+  useEffect(()=>{
+    try{
+      const prev = JSON.parse(localStorage.getItem("orch_recent")||"[]");
+      const updated = [{id:crypto.randomUUID(),title:docTitle,template,ts:Date.now()},...prev.filter(d=>d.title!==docTitle).slice(0,18)];
+      localStorage.setItem("orch_recent",JSON.stringify(updated));
+    }catch{}
+  },[]);
+
+  // keyboard shortcuts
+  useEffect(()=>{
+    const h = e=>{
+      const mod = e.metaKey||e.ctrlKey;
+      if(mod&&e.key==="Enter"&&ghosts.length>0){e.preventDefault();acceptGhost(ghosts[0].id);}
+      if(mod&&e.key==="Backspace"&&ghosts.length>0){e.preventDefault();rejectGhost(ghosts[0].id);}
+      if(mod&&e.shiftKey&&e.key==="S"){e.preventDefault();setScrutiny(v=>!v);}
+      if(mod&&e.key==="k"){e.preventDefault();document.getElementById("sbinput")?.focus();}
+    };
+    window.addEventListener("keydown",h);
+    return ()=>window.removeEventListener("keydown",h);
+  },[ghosts]);
+
+  const addThought = useCallback((model,role,content,citation=null)=>{
+    setThoughts(prev=>[...prev,mkThought(model,role,content,citation)]);
+  },[]);
+
+  const acceptGhost = useCallback((id)=>{
+    setGhosts(prev=>prev.filter(g=>g.id!==id));
+    addThought("kimi","KIMI K2.5","Draft accepted. Paragraph incorporated into document. Cross-link map updated.");
+    notify("Draft accepted — paragraph added to document");
+  },[addThought,notify]);
+
+  const rejectGhost = useCallback((id)=>{
+    setGhosts(prev=>prev.filter(g=>g.id!==id));
+    addThought("sys","NEXUS ORCHESTRATOR","Draft discarded. Document rolled back to pre-generation checkpoint. Context window reset.");
+    notify("Discarded — document rolled back");
+  },[addThought,notify]);
+
+  const startGeneration = useCallback((instruction="",mention=null)=>{
+    if(generating) return;
+    aborted.current = false;
+    setGenerating(true);
+    setStreamText("");
+    setSidebarTab(0);
+
+    const sec = activeSection;
+    const instr = instruction || `Continue writing §${sec} with empirical evidence from the RAG corpus`;
+
+    addThought("kimi","KIMI K2.5 · GENERATING",`Analyzing §${sec} context. Pulling 8 RAG chunks for: "${instr.slice(0,55)}..."`,`Retrieving from ${refs.length} indexed documents`);
+
+    const target = mention?.toLowerCase().includes("deepseek") ? STREAM_TEXTS.deepseek
+                 : mention?.toLowerCase().includes("qwen") ? STREAM_TEXTS.qwen
+                 : STREAM_TEXTS.default;
+
+    let idx=0;
+    streamIv.current = setInterval(()=>{
+      if(aborted.current){clearInterval(streamIv.current);setGenerating(false);setStreamText("");return;}
+      idx = Math.min(idx+14,target.length);
+      setStreamText(target.slice(0,idx));
+      if(idx>=target.length){
+        clearInterval(streamIv.current);
+        setTimeout(()=>{
+          if(aborted.current) return;
+          const ghostId = crypto.randomUUID();
+          setGhosts(prev=>[...prev,{id:ghostId,text:target,by:currentModel.key}]);
+          setStreamText("");
+          setGenerating(false);
+          setWc(w=>w+target.split(" ").length);
+          addThought("kimi","KIMI K2.5 · COMPLETE",`Generation complete. ${target.split(" ").length} words. DeepSeek flagged 1 claim. Awaiting user review.`);
+          addThought("ds","DEEPSEEK V3.2 · AUDIT","1 claim verified against RAG corpus. Confidence 92%. 1 scope qualification recommended.",`Fowler et al. (2012) §4.2`);
+          notify("Generation complete — review ghost draft below");
+        },200);
+      }
+    },40);
+
+    setTimeout(()=>{if(!aborted.current)addThought("ds","DEEPSEEK V3.2 · AUDITING","Monitoring generated output in real time. Scanning for unsubstantiated numerical claims...");},1800);
+    setTimeout(()=>{if(!aborted.current)addThought("qw","QWEN 3.5 · LOGIC","Checking argument structure. Causal claims appear supported by cited ablation data.");},3400);
+  },[generating,activeSection,currentModel.key,refs.length,addThought,notify]);
+
+  const stopGeneration = ()=>{
+    aborted.current = true;
+    clearInterval(streamIv.current);
+    setGenerating(false);
+    setStreamText("");
+    setPivotOpen(true);
+    addThought("sys","NEXUS ORCHESTRATOR","Generation interrupted. Partial output buffered. Awaiting pivot decision...");
+  };
+
+  const genFigure = (n)=>{
+    setGenFigAnim(prev=>({...prev,[n]:true}));
+    addThought("fx","FLUX.2-KLEIN · VISUAL",`Generating Figure ${n}. Minimalist scientific diagram. Externalizing all text labels...`);
+    setTimeout(()=>{
+      setFigs(prev=>({...prev,[n]:true}));
+      setGenFigAnim(prev=>({...prev,[n]:false}));
+      addThought("fx","FLUX.2-KLEIN · COMPLETE",`Figure ${n} generated. Labels A–D positioned. Aspect ratio 16:9.`);
+      notify(`Figure ${n} generated by flux.2-klein-4b`);
+    },2800);
+  };
+
+  const handleSend = ()=>{
+    const txt = sidebarInput.trim();
+    if(!txt) return;
+    addThought("usr","USER DIRECTIVE",txt);
+    setSidebarInput("");
+    setMentionDrop(false);
+    const m = txt.match(/@(kimi|deepseek|qwen|flux)/i);
+    startGeneration(txt, m?m[1]:null);
+  };
+
+  const handlePivot = (action,newModelKey=null)=>{
+    setPivotOpen(false);
+    setModelChipsOpen(false);
+    if(action==="keep"){addThought("sys","NEXUS ORCHESTRATOR","Keep & Continue. Partial output preserved at current cursor position.");notify("Partial output kept");}
+    else if(action==="discard"){setGhosts([]);addThought("sys","NEXUS ORCHESTRATOR","Discard & Regenerate. Rolling back to last stable checkpoint.");notify("Rolled back — regenerate when ready");}
+    else if(newModelKey){
+      const opt = MODEL_OPTS.find(m=>m.key===newModelKey);
+      if(opt){setCurrentModel({key:opt.key,cls:opt.cls});addThought("sys","NEXUS ORCHESTRATOR",`Model switched to ${opt.label}. Context transferred. Previous state archived.`);notify(`Switched to ${opt.label}`);}
+      setPivotOpen(false);
+    }
+  };
+
+  const simulateUpload = (filename)=>{
+    const jobId = crypto.randomUUID();
+    setIngestJobs(prev=>[...prev,{id:jobId,filename,stage:"Extracting text...",progress:0.05}]);
+    const stages=["Extracting text...","Chunking (512 tokens)...","Embedding (MiniLM)...","Indexing ChromaDB...","Complete"];
+    let si=0;
+    const iv=setInterval(()=>{
+      si++;
+      const done = si>=stages.length-1;
+      setIngestJobs(prev=>prev.map(j=>j.id===jobId?{...j,stage:stages[si]||"Complete",progress:Math.min((si+1)/stages.length,1)}:j));
+      if(done){
+        clearInterval(iv);
+        const refId=crypto.randomUUID();
+        setRefs(prev=>[...prev,{id:refId,filename,title:filename.replace(/\.(pdf|docx)$/i,""),chunks:20+Math.floor(Math.random()*35)}]);
+        setIngestJobs(prev=>prev.filter(j=>j.id!==jobId));
+        addThought("sys","NEXUS ORCHESTRATOR",`Indexed: ${filename}. ${20+Math.floor(Math.random()*35)} chunks embedded. ChromaDB updated.`);
+        notify(`${filename} indexed successfully`);
+      }
+    },750);
+  };
+
+  const showVerify = (badge)=>setVerifyData(badge);
+
+  // paragraph renderer
+  const renderPara = (para) => {
+    const t = para.text;
+    if(!para.badges||para.badges.length===0){
+      return para.isGhost ? <span className="ghost-span">{t}</span> : t;
+    }
+    const nodes=[];
+    let last=0;
+    para.badges.forEach((badge,bi)=>{
+      const insertAt = Math.floor(badge.at * t.length + 20);
+      const safe = Math.min(insertAt, t.length);
+      const chunk = t.slice(last,safe);
+      nodes.push(para.isGhost ? <span key={`c${bi}`} className="ghost-span">{chunk}</span> : <span key={`c${bi}`}>{chunk}</span>);
+      nodes.push(
+        <span key={`b${bi}`} className={`vbadge ${badge.status}`} onClick={e=>{e.stopPropagation();showVerify(badge);}} title={badge.title}>
+          {badge.status==="ok"?"✓":badge.status==="warn"?"?":"!"}
+        </span>
+      );
+      last=safe;
+    });
+    const rest=t.slice(last);
+    if(rest) nodes.push(para.isGhost?<span key="rest" className="ghost-span">{rest}</span>:<span key="rest">{rest}</span>);
+    return nodes;
+  };
+
+  return (
+    <div className="app">
+      {/* Toolbar */}
+      <div className="toolbar">
+        <button className="tb-logo" onClick={onBack}>Orchestra<em>◆</em></button>
+        <div className="tb-sep"/>
+        <input className="tb-title" value={docTitle} onChange={e=>onTitleChange(e.target.value)}/>
+        <div className="tb-sep"/>
+        <button className={`tbtn${scrutiny?" on":""}`} onClick={()=>{setScrutiny(v=>!v);notify(scrutiny?"Scrutiny View OFF":"Scrutiny View ON — paragraphs colored by source");}}>🌡 Scrutiny</button>
+        {generating
+          ? <button className="tbtn danger" onClick={stopGeneration}>◼ Stop</button>
+          : <button className={`tbtn${generating?" gen":""}`} onClick={()=>startGeneration()}>✦ Generate</button>
+        }
+        <div className="tb-sep"/>
+        <div className={`model-badge ${currentModel.cls}`}>
+          <div className={`mb-dot${generating?" live":""}`}/>
+          {currentModel.key.split("/").pop()}
+        </div>
+        <div className="tb-spacer"/>
+        <span style={{fontFamily:"'DM Mono',monospace",fontSize:"9.5px",color:"#a39880"}}>{wc} words</span>
+        <div className="tb-sep"/>
+        <button className="tbtn" onClick={()=>setSettingsOpen(true)}>⚙ Settings</button>
+        <button className="tbtn primary" onClick={()=>notify("Exported as IEEE-formatted DOCX")}>↓ Export</button>
+      </div>
+
+      {/* Main row */}
+      <div className="main-row">
+        {/* Outline */}
+        <div className="outline">
+          <div className="panel-head">Document Outline</div>
+          <div className="outline-list">
+            {SECTIONS.map(s=>(
+              <div key={s.id}
+                className={`ol-item${s.level===2?" h2":s.level===3?" h3":""}${activeSection===s.id?" active":""}`}
+                onClick={()=>{setActiveSection(s.id);document.getElementById(`sec-${s.id}`)?.scrollIntoView({behavior:"smooth",block:"start"});}}
+              >{s.label}</div>
+            ))}
+          </div>
+        </div>
+
+        {/* Editor canvas */}
+        <div className={`editor-scroll${scrutiny?" hm":""}`}>
+          {/* Heatmap legend */}
+          <div className={`hm-legend${scrutiny?" visible":""}`}>
+            <span style={{color:"#a39880",marginRight:4}}>Scrutiny View:</span>
+            {[["rgba(36,87,212,.4)","Original Draft"],["rgba(4,120,87,.4)","RAG-Verified"],["rgba(200,30,30,.4)","Needs Review"]].map(([c,l])=>(
+              <div key={l} style={{display:"flex",alignItems:"center",gap:5}}><div className="hm-dot" style={{background:c}}/><span style={{fontFamily:"'DM Mono',monospace",fontSize:9,color:"#a39880"}}>{l}</span></div>
+            ))}
+          </div>
+
+          {/* Page */}
+          <div className="page">
+            {/* Title block */}
+            <div className="doc-main-title" id="sec-abstract">
+              Topological Error Correction in Fault-Tolerant Quantum Computing:<br/>A Multi-Modal Neural Synthesis Approach
+            </div>
+            <div className="doc-authors">
+              A. Krishnaswamy¹ · M. Petrov² · S. Nakamura³<br/>
+              <span style={{opacity:.7}}>¹ Indian Institute of Science &nbsp;·&nbsp; ² ETH Zürich &nbsp;·&nbsp; ³ University of Tokyo</span>
+            </div>
+            <div className="doc-abstract-lbl">Abstract</div>
+            <div className="doc-abstract">
+              Fault-tolerant quantum computing requires robust mechanisms for detecting and correcting errors that accumulate through decoherence and gate imperfections. This paper presents a novel multi-modal synthesis approach combining topological qubit stabilization with neural network-driven syndrome decoding. Our architecture achieves a logical error rate of 1.3 × 10⁻⁸ at a physical error rate threshold of 0.87%, representing a 12× improvement over current surface code implementations.
+            </div>
+            <div className="doc-divider"/>
+
+            {/* Sections with paragraphs */}
+            {SECTIONS.filter(s=>s.id!=="abstract").map(sec=>(
+              <div key={sec.id}>
+                {sec.level===1
+                  ? <div className="doc-h1" id={`sec-${sec.id}`}>{sec.label}</div>
+                  : <div className="doc-h2" id={`sec-${sec.id}`}>{sec.label}</div>
+                }
+                {DEMO_PARA.filter(p=>p.sec===sec.id).map(para=>(
+                  <div key={para.id}>
+                    <div
+                      className={`doc-p ${para.src}${selPara===para.id?" selected":""}`}
+                      onClick={()=>setSelPara(para.id)}
+                    >
+                      {renderPara(para)}
+                    </div>
+                    {para.isGhost && !ghosts.some(g=>g.id===para.id) && (
+                      <div className="ghost-bar">
+                        <GhostBtn label="✓ Accept" cls="acc" onClick={()=>notify("Draft accepted")}/>
+                        <GhostBtn label="✕ Discard" cls="rej" onClick={()=>notify("Discarded")}/>
+                        <span className="ghost-model">Generated by kimi-k2.5</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {sec.id==="arch" && (
+                  <FigBlock n={1} cap="Topological structure of the rotated surface code (d=7). Labels A–D indicate syndrome extraction vertices." generated={figs[1]} anim={genFigAnim[1]} onGen={()=>genFigure(1)}><SurfaceFig/></FigBlock>
+                )}
+                {sec.id==="bench" && (
+                  <FigBlock n={2} cap="TopoNet-7 logical error rate vs. physical error rate threshold curves across code distances d ∈ {5,7,9,11,13}." generated={figs[2]} anim={genFigAnim[2]} onGen={()=>genFigure(2)}><ErrorRateFig/></FigBlock>
+                )}
+              </div>
+            ))}
+
+            {/* References */}
+            <div className="doc-h1" id="sec-refs">References</div>
+            <div style={{fontFamily:"'DM Mono',monospace",fontSize:10.5,lineHeight:2,color:"#6a6254"}}>
+              [1] Fowler, A. G. et al. (2012). Surface codes: Towards practical large-scale quantum computation. <em>Phys. Rev. A</em> 86, 032324.<br/>
+              [2] Preskill, J. (2018). Quantum computing in the NISQ era and beyond. <em>Quantum</em> 2, 79.<br/>
+              [3] Su, J. et al. (2022). RoFormer: Enhanced transformer with rotary position embedding. <em>Neurocomputing</em> 568, 127063.<br/>
+              [4] Gidney, C. (2021). Stim: A fast stabilizer circuit simulator. <em>Quantum</em> 5, 497.<br/>
+              [5] Google Quantum AI (2023). Suppressing quantum errors. <em>Nature</em> 614, 676–681.
+            </div>
+
+            {/* Live stream */}
+            {streamText && (
+              <div className="stream-para" style={{marginTop:12}}>
+                {streamText}
+                <span className="typing-dots"><span className="td"/><span className="td"/><span className="td"/></span>
+              </div>
+            )}
+
+            {/* Ghost blocks */}
+            {ghosts.map(g=>(
+              <div key={g.id} style={{marginTop:12}}>
+                <div className="doc-p src-flag" style={{fontSize:"14.5px",lineHeight:1.76}}>
+                  <span className="ghost-span">{g.text}</span>
+                </div>
+                <div className="ghost-bar">
+                  <GhostBtn label="✓ Accept Draft" cls="acc" onClick={()=>acceptGhost(g.id)}/>
+                  <GhostBtn label="✕ Discard" cls="rej" onClick={()=>rejectGhost(g.id)}/>
+                  <span className="ghost-model">Generated by {g.by}</span>
+                  <span className="ghost-hint">⌘↵ / ⌘⌫</span>
+                </div>
+              </div>
+            ))}
+
+            <div className="page-num">1</div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="sidebar dk">
+          <div className="sb-tabs">
+            {["Thought Stream","Context Lib"].map((t,i)=>(
+              <div key={i} className={`sb-tab${sidebarTab===i?" active":""}`} onClick={()=>setSidebarTab(i)}>{t}</div>
+            ))}
+          </div>
+
+          {/* Thought stream tab */}
+          {sidebarTab===0 && (
+            <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+              <div className="thought-stream dk" ref={thoughtsEl}>
+                {thoughts.map(t=><ThoughtBubble key={t.id} entry={t} onReplay={()=>setReplayOpen(true)}/>)}
+                {generating && (
+                  <div className="gen-indicator">
+                    <span style={{fontWeight:600}}>Generating</span>
+                    <span className="typing-dots"><span className="td"/><span className="td"/><span className="td"/></span>
+                  </div>
+                )}
+              </div>
+              <div className="sb-input-area">
+                <div className="sb-hint">Mention @Kimi @DeepSeek @Qwen @Flux to direct a model</div>
+                <div className="sb-input-wrap">
+                  {mentionDrop && (
+                    <div className="mention-drop">
+                      {MENTION_LIST.map(m=>(
+                        <button key={m.key} className="mention-item"
+                          onMouseDown={e=>{e.preventDefault();setSidebarInput(prev=>prev.replace(/@$/,"")+m.label+" ");setMentionDrop(false);document.getElementById("sbinput")?.focus();}}>
+                          <span className="mention-name" style={{color:m.color}}>{m.label}</span>
+                          <span className="mention-role">{m.role}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <textarea id="sbinput" className="sb-input" rows={1} disabled={generating}
+                    placeholder="@DeepSeek audit §3.1 statistical claims..."
+                    value={sidebarInput}
+                    onChange={e=>{setSidebarInput(e.target.value);setMentionDrop(e.target.value.endsWith("@"));}}
+                    onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleSend();}if(e.key==="Escape")setMentionDrop(false);}}
+                  />
+                  <button className="sb-send" onClick={handleSend} disabled={generating||!sidebarInput.trim()}>→</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Context librarian tab */}
+          {sidebarTab===1 && (
+            <div style={{flex:1,overflowY:"auto"}} className="dk">
+              <div className="drop-zone"
+                onClick={()=>document.getElementById("file-upload").click()}
+                onDragOver={e=>{e.preventDefault();e.currentTarget.classList.add("over");}}
+                onDragLeave={e=>e.currentTarget.classList.remove("over")}
+                onDrop={e=>{e.preventDefault();e.currentTarget.classList.remove("over");const f=e.dataTransfer.files[0];if(f)simulateUpload(f.name);}}
+              >
+                <input id="file-upload" type="file" accept=".pdf,.docx" style={{display:"none"}} onChange={e=>{if(e.target.files[0])simulateUpload(e.target.files[0].name);}}/>
+                <div className="drop-icon">📄</div>
+                <div className="drop-text"><strong style={{color:"#6b7280"}}>Click or drag PDF / DOCX</strong><br/>to add to RAG index</div>
+              </div>
+
+              {ingestJobs.map(job=>(
+                <div key={job.id} className="ingest-card">
+                  <div className="ingest-name">{job.filename}</div>
+                  <div className="ingest-stage">{job.stage}</div>
+                  <div className="ingest-bar"><div className="ingest-fill" style={{width:`${job.progress*100}%`}}/></div>
+                </div>
+              ))}
+
+              <div className="lib-section">Indexed References ({refs.length})</div>
+              {refs.map(r=>(
+                <div key={r.id} className="ref-card">
+                  <div className="ref-name">{r.filename}</div>
+                  <div className="ref-meta">{r.title}<span className="ref-chunks">{r.chunks} chunks</span></div>
+                </div>
+              ))}
+
+              <div className="lib-section" style={{marginTop:12}}>Web Search — {config.field}</div>
+              {WEB_RESULTS.map((r,i)=>(
+                <div key={i} className="web-result">
+                  <div className="web-title">{r.title}</div>
+                  <div className="web-meta">{r.src} · {r.yr}</div>
+                </div>
+              ))}
+              <div style={{height:16}}/>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Status bar */}
+      <div className="status-bar">
+        <span>{wc} words</span>
+        <span className="status-dot">•</span>
+        <span>Active: {currentModel.key.split("/").pop()}</span>
+        <span className="status-dot">•</span>
+        <span>RAG: {refs.length} docs indexed</span>
+        <span className="status-dot">•</span>
+        <span>{generating?"⏳ Generating…":"Ready"}</span>
+      </div>
+
+      {/* Modals */}
+      {pivotOpen && <PivotModal onPivot={handlePivot} onClose={()=>{setPivotOpen(false);setModelChipsOpen(false);}} modelChipsOpen={modelChipsOpen} onToggleChips={()=>setModelChipsOpen(v=>!v)}/>}
+      {settingsOpen && <SettingsModal config={config} onSave={c=>{setConfig(c);setSettingsOpen(false);notify("Configuration saved — agents will use new settings");}} onClose={()=>setSettingsOpen(false)}/>}
+      {verifyData && (
+        <div className="verify-panel">
+          <div className="vp-head">
+            <span className="vp-title">{verifyData.title||"Source Verification"}</span>
+            <button className="vp-close" onClick={()=>setVerifyData(null)}>✕</button>
+          </div>
+          <div className="vp-body">
+            <div className="vp-src">{verifyData.src}</div>
+            <div className="vp-quote">{verifyData.quote}</div>
+          </div>
+        </div>
+      )}
+      {replayOpen && <ReplayModal thoughts={thoughts.slice(-8)} onClose={()=>setReplayOpen(false)}/>}
+    </div>
+  );
+}
+
+function GhostBtn({label,cls,onClick}) {
+  return <button className={`ghost-btn ${cls}`} onClick={onClick}>{label}</button>;
+}
+
+function FigBlock({n,cap,generated,anim,onGen,children}) {
+  return (
+    <div className="fig-block">
+      {!generated ? (
+        <div className="fig-ph">
+          {anim
+            ? <><div style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:"#a39880",display:"flex",alignItems:"center",gap:8}}>flux.2-klein-4b generating<span className="typing-dots"><span className="td"/><span className="td"/><span className="td"/></span></div></>
+            : <>
+                <div className="fig-ph-icon">⬡</div>
+                <div className="fig-ph-lbl">Figure {n} · Awaiting Generation</div>
+                <div className="fig-ph-cap">"{cap}"</div>
+                <button className="fig-gen-btn" onClick={onGen}>⚡ Generate with flux.2-klein-4b</button>
+              </>
+          }
+        </div>
+      ) : children}
+      <div className="fig-caption">Figure {n}. {cap} (Generated by flux.2-klein-4b)</div>
+    </div>
+  );
+}
+
+function ThoughtBubble({entry,onReplay}) {
+  const col = {kimi:"#60a5fa",ds:"#34d399",qw:"#a78bfa",fx:"#fb923c",sys:"#4b5563",usr:"#f0980a"}[entry.model]||"#4b5563";
+  const time = entry.ts.toLocaleTimeString("en-US",{hour12:false,hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  return (
+    <div className={`thought-entry te-${entry.model}`}>
+      <div className="te-tag">
+        <span className="te-dot"/>
+        {entry.role}
+        <span className="te-time">{time}</span>
+        {entry.model!=="sys"&&entry.model!=="usr"&&<button className="te-replay" onClick={onReplay} title="Replay reasoning">↺</button>}
+      </div>
+      <div className="te-text">{entry.content}</div>
+      {entry.citation&&<div className="te-cite">↳ {entry.citation}</div>}
+    </div>
+  );
+}
+
+function PivotModal({onPivot,onClose,modelChipsOpen,onToggleChips}) {
+  const chips = [
+    {key:"moonshotai/kimi-k2.5",label:"Kimi K2.5",style:{background:"#eff6ff",borderColor:"#bfdbfe",color:"#1d4ed8"}},
+    {key:"deepseek-ai/deepseek-v3.2",label:"DeepSeek V3.2",style:{background:"#f0fdf4",borderColor:"#bbf7d0",color:"#15803d"}},
+    {key:"qwen/qwen3.5-397b-a17b",label:"Qwen 3.5",style:{background:"#fdf4ff",borderColor:"#e9d5ff",color:"#7c3aed"}},
+  ];
+  return (
+    <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal-box" style={{width:400}}>
+        <div className="modal-title">Generation Stopped</div>
+        <div className="modal-sub">Interrupted · partial output preserved</div>
+        <button className="pivot-opt" onClick={()=>onPivot("keep")}>
+          <div className="pivot-icon" style={{background:"#ecfdf5"}}>📌</div>
+          <div><div className="pivot-label">Keep &amp; Continue</div><div className="pivot-desc">Save partial output and resume from this point</div></div>
+        </button>
+        <button className="pivot-opt" onClick={()=>onPivot("discard")}>
+          <div className="pivot-icon" style={{background:"#fff1f2"}}>🗑</div>
+          <div><div className="pivot-label">Discard &amp; Regenerate</div><div className="pivot-desc">Roll back and retry with a different approach</div></div>
+        </button>
+        <button className="pivot-opt" onClick={onToggleChips}>
+          <div className="pivot-icon" style={{background:"#eff6ff"}}>🔀</div>
+          <div style={{flex:1}}>
+            <div className="pivot-label">Switch Model</div>
+            <div className="pivot-desc">Current model struggling — try another NIM</div>
+            {modelChipsOpen && (
+              <div className="model-chips" onClick={e=>e.stopPropagation()}>
+                {chips.map(c=><button key={c.key} className="model-chip" style={c.style} onClick={()=>onPivot(null,c.key)}>{c.label}</button>)}
+              </div>
+            )}
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SettingsModal({config,onSave,onClose}) {
+  const [local,setLocal] = useState(config);
+  const [tab,setTab] = useState(0);
+  const set=(k,v)=>setLocal(prev=>({...prev,[k]:v}));
+  return (
+    <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="modal-box" style={{width:460,maxHeight:"82vh",overflowY:"auto"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
+          <div className="modal-title" style={{marginBottom:0}}>Instruction Ledger</div>
+          <button onClick={onClose} style={{background:"none",border:"none",fontSize:18,color:"#a39880",cursor:"pointer"}}>✕</button>
+        </div>
+        <div className="settings-tabs">
+          {["Project","Tone","Rigor"].map((t,i)=><button key={t} className={`stab${tab===i?" active":""}`} onClick={()=>setTab(i)}>{t}</button>)}
+        </div>
+        {tab===0&&(
+          <>
+            <div className="form-row">
+              <FG label="Target Journal"><select className="form-select" value={local.journal} onChange={e=>set("journal",e.target.value)}>
+                {["Nature","Science","IEEE","APA","Cell","PNAS"].map(j=><option key={j}>{j}</option>)}
+              </select></FG>
+              <FG label="Citation Standard"><select className="form-select" value={local.citation} onChange={e=>set("citation",e.target.value)}>
+                {["IEEE","APA","Chicago","Vancouver"].map(c=><option key={c}>{c}</option>)}
+              </select></FG>
+            </div>
+            <FG label="Research Field"><input className="form-input" value={local.field} onChange={e=>set("field",e.target.value)}/></FG>
+          </>
+        )}
+        {tab===1&&(
+          <>
+            <FG label="Writing Profile"><select className="form-select" value={local.profile} onChange={e=>set("profile",e.target.value)}>
+              {["Academic/Formal","Technical","Explanatory","Review"].map(p=><option key={p}>{p}</option>)}
+            </select></FG>
+            <FG label="Voice"><select className="form-select" value={local.voice} onChange={e=>set("voice",e.target.value)}>
+              {["Third Person","First Person","Passive"].map(v=><option key={v}>{v}</option>)}
+            </select></FG>
+          </>
+        )}
+        {tab===2&&(
+          <>
+            <FG label={`Scientific Rigor — ${local.rigor}/10`}>
+              <input type="range" min={1} max={10} value={local.rigor} style={{width:"100%",accentColor:"#17160d",cursor:"pointer"}} onChange={e=>set("rigor",+e.target.value)}/>
+            </FG>
+            {[["requireCite","Require Citations"],["flagUnver","Flag Unverified Claims"],["peerReview","Peer Review Mode"]].map(([k,lbl])=>(
+              <div key={k} className="toggle-row">
+                <span className="toggle-label">{lbl}</span>
+                <button className={`toggle${local[k]?" on":""}`} onClick={()=>set(k,!local[k])}/>
+              </div>
+            ))}
+            <FG label="Max Hallucination Score"><input className="form-input" type="number" min={0.01} max={0.2} step={0.01} value={local.hallu} onChange={e=>set("hallu",e.target.value)}/></FG>
+          </>
+        )}
+        <button className="save-btn" onClick={()=>onSave(local)}>Save Configuration</button>
+      </div>
+    </div>
+  );
+}
+
+function FG({label,children}) {
+  return <div className="form-group"><label className="form-label">{label}</label>{children}</div>;
+}
+
+function ReplayModal({thoughts,onClose}) {
+  const [visible,setVisible] = useState(0);
+  useEffect(()=>{
+    let i=0;
+    const iv=setInterval(()=>{i++;setVisible(i);if(i>=thoughts.length)clearInterval(iv);},580);
+    return()=>clearInterval(iv);
+  },[thoughts.length]);
+
+  const exportMd=()=>{
+    const content=thoughts.map(t=>`## ${t.model} — ${t.role}\n\n${t.content}${t.citation?`\n\n> ↳ ${t.citation}`:""}`).join("\n\n---\n\n");
+    const blob=new Blob([`# Thought Replay\n\n${content}`],{type:"text/markdown"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="thought-replay.md";a.click();
+  };
+
+  return (
+    <div className="modal-bg" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="replay-modal">
+        <div className="replay-head">
+          <div>
+            <div className="replay-title">Thought Replay</div>
+            <div className="replay-sub">Last {thoughts.length} reasoning entries</div>
+          </div>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <button className="export-btn" onClick={exportMd}>↓ Export .md</button>
+            <button onClick={onClose} style={{background:"none",border:"none",color:"#4b5563",fontSize:14,cursor:"pointer"}}>✕</button>
+          </div>
+        </div>
+        <div className="replay-prog-track">
+          <div className="replay-prog-fill" style={{width:`${(visible/thoughts.length)*100}%`}}/>
+        </div>
+        <div className="replay-body dk">
+          {thoughts.slice(0,visible).map(t=><ThoughtBubble key={t.id} entry={t} onReplay={()=>{}}/>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

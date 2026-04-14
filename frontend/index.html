@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orchestra Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --canvas: #faf9f6;
+  --page: #ffffff;
+  --sidebar: #0b0d14;
+  --sidebar-2: #111420;
+  --sidebar-border: #1c2030;
+  --text-1: #19180f;
+  --text-2: #6b6457;
+  --text-3: #a09880;
+  --amber: #c97d10;
+  --amber-light: #f59e0b;
+  --blue: #2563eb;
+  --green: #059669;
+  --red: #dc2626;
+  --violet: #7c3aed;
+  --orange: #c2410c;
+  --outline-w: 210px;
+  --sidebar-w: 360px;
+  --toolbar-h: 48px;
+  --status-h: 22px;
+  --page-shadow: 0 2px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  background: var(--canvas);
+  color: var(--text-1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── GALLERY ─────────────────────────────────────────── */
+#gallery {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+.gallery-left {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 40px;
+  border-right: 1px solid var(--sidebar-border);
+}
+.gallery-wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  margin-bottom: 12px;
+}
+.gallery-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.05;
+  color: #f5f1eb;
+  letter-spacing: -0.5px;
+}
+.gallery-title em { color: var(--amber-light); font-style: normal; }
+.gallery-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  color: #4a5568;
+  line-height: 1.7;
+  margin-top: 20px;
+}
+.gallery-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 28px;
+}
+.g-badge {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  border: 1px solid;
+}
+.g-badge.blue { background: rgba(37,99,235,.08); border-color: rgba(37,99,235,.2); color: #60a5fa; }
+.g-badge.green { background: rgba(5,150,105,.08); border-color: rgba(5,150,105,.2); color: #34d399; }
+.g-badge.violet { background: rgba(124,58,237,.08); border-color: rgba(124,58,237,.2); color: #a78bfa; }
+.g-badge.amber { background: rgba(201,125,16,.08); border-color: rgba(201,125,16,.2); color: var(--amber-light); }
+
+.gallery-right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 48px 48px 32px;
+  background: var(--canvas);
+}
+.gallery-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  margin-bottom: 18px;
+}
+.template-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.template-card {
+  background: var(--page);
+  border: 1.5px solid rgba(0,0,0,0.07);
+  border-radius: 12px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  overflow: hidden;
+  box-shadow: var(--page-shadow);
+}
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+  border-color: rgba(0,0,0,0.12);
+}
+.template-preview {
+  height: 160px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.template-preview.ieee { background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%); }
+.template-preview.nature { background: linear-gradient(135deg, #f0fdf4 0%, #e8fdf0 100%); }
+.template-preview.apa { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
+.template-preview.blank { background: linear-gradient(135deg, #faf9f6 0%, #f5f4f0 100%); }
+.preview-cols {
+  display: flex;
+  gap: 8px;
+  height: 100%;
+}
+.preview-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.preview-line {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(0,0,0,0.08);
+}
+.preview-line.wide { width: 100%; }
+.preview-line.mid { width: 75%; }
+.preview-line.short { width: 45%; }
+.preview-line.head { height: 7px; background: rgba(0,0,0,0.15); margin-bottom: 4px; }
+.preview-line.blue { background: rgba(37,99,235,0.25); }
+.preview-line.green { background: rgba(5,150,105,0.2); }
+.template-info {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+.template-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 3px;
+}
+.template-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+.template-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  border: 1px solid;
+}
+.template-badge.ieee { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.template-badge.nature { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.template-badge.apa { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.template-badge.blank { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
+
+.recent-section { margin-top: 8px; }
+.recent-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--text-3);
+  padding: 28px 0;
+  text-align: center;
+}
+.recent-list { display: flex; flex-direction: column; gap: 8px; }
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: var(--page);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.recent-item:hover { border-color: rgba(0,0,0,0.12); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.recent-icon { font-size: 16px; }
+.recent-info { flex: 1; min-width: 0; }
+.recent-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-1); }
+.recent-meta { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-3); margin-top: 1px; }
+
+/* ── APP SHELL ────────────────────────────────────────── */
+#app { display: none; flex-direction: column; height: 100vh; }
+
+/* ── TOOLBAR ──────────────────────────────────────────── */
+.toolbar {
+  height: var(--toolbar-h);
+  background: rgba(250,249,246,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 6px;
+  flex-shrink: 0;
+  z-index: 50;
+}
+.toolbar-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+  margin-right: 4px;
+  cursor: default;
+  user-select: none;
+}
+.toolbar-logo em { color: var(--amber); font-style: normal; }
+.toolbar-sep { width: 1px; height: 20px; background: rgba(0,0,0,0.08); margin: 0 2px; }
+.tbtn {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(0,0,0,0.09);
+  border-radius: 6px;
+  background: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tbtn:hover { background: #f4f3ef; color: var(--text-1); border-color: rgba(0,0,0,0.15); }
+.tbtn.on { background: var(--text-1); color: #fff; border-color: transparent; }
+.tbtn.primary { background: var(--text-1); color: #fff; border-color: transparent; }
+.tbtn.primary:hover { background: #2d2b22; }
+.tbtn.danger { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; }
+.tbtn.gen-pulse { animation: genPulse 1.8s infinite; }
+@keyframes genPulse {
+  0%,100% { border-color: rgba(0,0,0,0.09); }
+  50% { border-color: var(--amber-light); box-shadow: 0 0 0 2px rgba(245,158,11,0.12); }
+}
+.doc-title-input {
+  flex: 1;
+  max-width: 280px;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-1);
+  padding: 4px 8px;
+  border-radius: 5px;
+  transition: background 0.15s;
+}
+.doc-title-input:hover, .doc-title-input:focus { background: rgba(0,0,0,0.04); }
+.toolbar-spacer { flex: 1; }
+.model-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  border: 1px solid;
+  user-select: none;
+  flex-shrink: 0;
+}
+.model-badge.kimi { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.model-badge.ds { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.model-badge.qw { background: #fdf4ff; border-color: #e9d5ff; color: #7c3aed; }
+.mbdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.mbdot.live { animation: dotBlink 1s infinite; }
+@keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── MAIN LAYOUT ──────────────────────────────────────── */
+.main { flex: 1; display: flex; overflow: hidden; }
+
+/* ── OUTLINE ──────────────────────────────────────────── */
+.outline {
+  width: var(--outline-w);
+  background: var(--canvas);
+  border-right: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 11px 14px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+.outline-list { flex: 1; overflow-y: auto; padding: 5px 0; }
+.outline-item {
+  padding: 5px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+  line-height: 1.4;
+}
+.outline-item:hover { color: var(--text-1); background: rgba(0,0,0,0.02); }
+.outline-item.active { color: var(--blue); border-left-color: var(--blue); background: rgba(37,99,235,0.04); }
+.outline-item.h2 { padding-left: 22px; font-size: 9.5px; }
+.outline-item.h3 { padding-left: 30px; font-size: 9px; color: var(--text-3); }
+
+/* ── EDITOR CANVAS ────────────────────────────────────── */
+.editor-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  scroll-behavior: smooth;
+}
+.heatmap-legend {
+  display: none;
+  width: 100%;
+  max-width: 720px;
+  padding: 7px 14px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 8px 8px 0 0;
+  gap: 14px;
+  align-items: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  flex-wrap: wrap;
+  margin-bottom: -4px;
+}
+.heatmap-legend.visible { display: flex; }
+.hm-item { display: flex; align-items: center; gap: 5px; }
+.hm-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+.page {
+  width: 100%;
+  max-width: 720px;
+  min-height: 1040px;
+  background: var(--page);
+  box-shadow: var(--page-shadow);
+  border-radius: 2px;
+  padding: 80px 88px 68px;
+  position: relative;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.page.loaded { opacity: 1; transform: translateY(0); }
+.page-number {
+  position: absolute;
+  bottom: 24px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-3);
+}
+
+/* Document typography */
+.doc-main-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+.doc-authors {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.doc-abstract-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  margin-bottom: 7px;
+}
+.doc-abstract {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-2);
+  font-style: italic;
+  padding: 13px;
+  background: rgba(0,0,0,0.018);
+  border-left: 2px solid rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+.doc-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+  margin: 24px 0;
+}
+.doc-h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--text-1);
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+.doc-h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text-1);
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+.doc-p {
+  font-size: 14px;
+  line-height: 1.76;
+  color: #252018;
+  margin-bottom: 12px;
+  position: relative;
+  transition: background 0.25s, padding 0.25s, border 0.25s, margin 0.25s;
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
+}
+.doc-p:hover { background: rgba(0,0,0,0.015); }
+
+/* Heatmap coloring */
+.hm-on .doc-p.src-original {
+  background: rgba(37,99,235,0.06);
+  border-left: 2px solid rgba(37,99,235,0.25);
+  padding-left: 9px;
+  margin-left: -11px;
+}
+.hm-on .doc-p.src-verified {
+  background: rgba(5,150,105,0.06);
+  border-left: 2px solid rgba(5,150,105,0.25);
+  padding-left: 9px;
+  margin-left: -11px;
+}
+.hm-on .doc-p.src-flagged {
+  background: rgba(220,38,38,0.06);
+  border-left: 2px solid rgba(220,38,38,0.25);
+  padding-left: 9px;
+  margin-left: -11px;
+}
+
+/* Ghost paragraphs */
+.ghost-text { color: rgba(37,99,235,0.65); font-style: italic; border-bottom: 1px dashed rgba(37,99,235,0.3); }
+.ghost-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -4px 0 12px;
+  padding: 6px 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s;
+}
+.ghost-bar.visible { opacity: 1; transform: translateY(0); }
+.ghost-btn {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.15s;
+}
+.ghost-btn.accept { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; }
+.ghost-btn.accept:hover { background: #065f46; color: #fff; }
+.ghost-btn.reject { background: #fff1f2; border-color: #fda4af; color: #9f1239; }
+.ghost-btn.reject:hover { background: #9f1239; color: #fff; }
+.ghost-model { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-3); }
+
+/* Verification badges */
+.vbadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  font-size: 7.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 1px;
+  vertical-align: super;
+  transition: transform 0.15s;
+  border: 1px solid;
+  font-family: 'DM Mono', monospace;
+}
+.vbadge:hover { transform: scale(1.4); }
+.vbadge.ok { background: #ecfdf5; border-color: #34d399; color: #065f46; }
+.vbadge.warn { background: #fef3c7; border-color: #fbbf24; color: #92400e; }
+.vbadge.err { background: #fff1f2; border-color: #fb7185; color: #9f1239; }
+
+/* Figure blocks */
+.fig-block {
+  border: 1.5px dashed rgba(0,0,0,0.1);
+  border-radius: 7px;
+  padding: 20px;
+  margin: 16px 0;
+  background: rgba(0,0,0,0.006);
+  text-align: center;
+}
+.fig-placeholder { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.fig-icon { font-size: 26px; opacity: 0.25; }
+.fig-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); }
+.fig-prompt { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-3); font-style: italic; margin-bottom: 8px; }
+.fig-gen-btn {
+  padding: 4px 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  border-radius: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.fig-gen-btn:hover { background: #c2410c; color: #fff; }
+.fig-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  color: var(--text-2);
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* ── SIDEBAR ──────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-left: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.sidebar-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+.sidebar-tab {
+  flex: 1;
+  padding: 10px 6px;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #374151;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.18s;
+  user-select: none;
+}
+.sidebar-tab:hover { color: #6b7280; }
+.sidebar-tab.active { color: var(--amber-light); border-bottom-color: var(--amber-light); }
+
+/* Thought stream */
+.thought-stream {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.thought-entry {
+  border-radius: 7px;
+  padding: 9px 11px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  line-height: 1.55;
+  animation: thoughtIn 0.28s ease;
+}
+@keyframes thoughtIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.thought-entry.kimi { background: rgba(37,99,235,0.07); border: 1px solid rgba(37,99,235,0.13); }
+.thought-entry.ds { background: rgba(5,150,105,0.07); border: 1px solid rgba(5,150,105,0.13); }
+.thought-entry.qw { background: rgba(124,58,237,0.07); border: 1px solid rgba(124,58,237,0.13); }
+.thought-entry.fx { background: rgba(194,65,12,0.07); border: 1px solid rgba(194,65,12,0.13); }
+.thought-entry.sys { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.05); }
+.thought-entry.usr { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.13); }
+.thought-tag {
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.thought-tag.kimi { color: #60a5fa; }
+.thought-tag.ds { color: #34d399; }
+.thought-tag.qw { color: #a78bfa; }
+.thought-tag.fx { color: #fb923c; }
+.thought-tag.sys { color: #4b5563; }
+.thought-tag.usr { color: var(--amber-light); }
+.thought-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.thought-text { color: #94a3b8; }
+.thought-cite {
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 4px;
+  font-size: 9px;
+  color: #374151;
+  border-left: 2px solid var(--amber-light);
+}
+.typing-dots { display: inline-flex; gap: 3px; align-items: center; margin-left: 4px; }
+.typing-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--amber-light);
+  animation: tdot 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-4px);opacity:1} }
+
+/* Sidebar input */
+.sidebar-input-area {
+  padding: 10px;
+  border-top: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+.sidebar-input-hint {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  color: #374151;
+  margin-bottom: 7px;
+  padding-left: 1px;
+}
+.sidebar-input-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 9px;
+  padding: 7px 10px;
+}
+.sidebar-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  color: #e2e8f0;
+  resize: none;
+  min-height: 18px;
+  max-height: 76px;
+  line-height: 1.5;
+}
+.sidebar-input::placeholder { color: #374151; }
+.sidebar-send-btn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--amber-light);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1814;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.sidebar-send-btn:hover { background: #d97706; }
+
+/* Context librarian */
+.librarian-panel { flex: 1; overflow-y: auto; padding: 0; display: flex; flex-direction: column; }
+.drop-zone {
+  margin: 12px;
+  border: 1.5px dashed rgba(255,255,255,0.12);
+  border-radius: 9px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.02);
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: rgba(245,158,11,0.4);
+  background: rgba(245,158,11,0.04);
+}
+.drop-icon { font-size: 22px; margin-bottom: 8px; opacity: 0.5; }
+.drop-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+.drop-text strong { color: #6b7280; }
+.lib-section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #374151;
+  padding: 10px 14px 6px;
+}
+.ref-card {
+  margin: 4px 10px;
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ref-card:hover { background: rgba(255,255,255,0.045); }
+.ref-card-name { font-family: 'DM Mono', monospace; font-size: 9.5px; color: #94a3b8; margin-bottom: 2px; }
+.ref-card-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: #374151; }
+.ref-badge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  background: rgba(245,158,11,0.1);
+  color: var(--amber-light);
+  border: 1px solid rgba(245,158,11,0.18);
+  margin-left: 5px;
+}
+.ingest-progress {
+  margin: 4px 10px;
+  padding: 9px 12px;
+  background: rgba(245,158,11,0.06);
+  border: 1px solid rgba(245,158,11,0.15);
+  border-radius: 6px;
+}
+.ingest-name { font-family: 'DM Mono', monospace; font-size: 9.5px; color: #94a3b8; margin-bottom: 5px; }
+.ingest-stage { font-family: 'DM Mono', monospace; font-size: 9px; color: #4b5563; margin-bottom: 6px; }
+.progress-bar { height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--amber-light); border-radius: 1px; transition: width 0.4s; }
+
+/* Web search results */
+.web-result {
+  margin: 3px 10px;
+  padding: 8px 11px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 5px;
+}
+.web-result-title { font-family: 'DM Mono', monospace; font-size: 9.5px; color: #60a5fa; margin-bottom: 3px; }
+.web-result-snippet { font-family: 'DM Mono', monospace; font-size: 8.5px; color: #374151; line-height: 1.5; }
+.web-result-meta { font-family: 'DM Mono', monospace; font-size: 8px; color: #1f2937; margin-top: 3px; }
+
+/* ── STATUS BAR ───────────────────────────────────────── */
+.status-bar {
+  height: var(--status-h);
+  background: var(--canvas);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+.status-dot { color: rgba(0,0,0,0.2); }
+
+/* ── MODALS ───────────────────────────────────────────── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-backdrop.visible { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  animation: modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn { from{opacity:0;transform:scale(0.88) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-2);
+  margin-bottom: 22px;
+}
+.pivot-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: #fff;
+  margin-bottom: 8px;
+}
+.pivot-option:hover { border-color: rgba(0,0,0,0.16); box-shadow: 0 2px 10px rgba(0,0,0,0.05); transform: translateY(-1px); }
+.pivot-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.pivot-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+.pivot-desc {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+.model-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.model-chip {
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.12s;
+}
+.model-chip.kimi { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.model-chip.ds { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.model-chip.qw { background: #fdf4ff; border-color: #e9d5ff; color: #7c3aed; }
+.model-chip:hover { opacity: 0.7; }
+
+/* Verify panel */
+.verify-panel {
+  display: none;
+  position: fixed;
+  bottom: 36px;
+  right: 20px;
+  z-index: 150;
+}
+.verify-panel.visible { display: block; }
+.verify-box {
+  background: var(--sidebar-2);
+  border: 1px solid var(--sidebar-border);
+  border-radius: 11px;
+  width: 320px;
+  max-height: 380px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  animation: vpIn 0.22s ease;
+}
+@keyframes vpIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.verify-header {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--sidebar-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.verify-title { font-family: 'DM Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--amber-light); }
+.verify-close { background: none; border: none; color: #4b5563; cursor: pointer; font-size: 13px; line-height: 1; }
+.verify-body { padding: 12px 14px; overflow-y: auto; flex: 1; }
+.verify-src { font-family: 'DM Mono', monospace; font-size: 9.5px; font-weight: 500; color: #94a3b8; margin-bottom: 8px; }
+.verify-quote {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
+  padding: 8px 10px;
+  background: rgba(245,158,11,0.07);
+  border-left: 2px solid var(--amber-light);
+  border-radius: 0 4px 4px 0;
+  line-height: 1.65;
+}
+
+/* Settings modal */
+.settings-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+.settings-tab {
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #fff;
+  color: var(--text-2);
+  transition: all 0.12s;
+}
+.settings-tab.active { background: var(--text-1); color: #fff; border-color: transparent; }
+.settings-panel { display: none; }
+.settings-panel.active { display: block; }
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  color: var(--text-2);
+  margin-bottom: 5px;
+}
+.form-input, .form-select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-1);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--blue); }
+.form-row { display: flex; gap: 10px; }
+.form-row .form-group { flex: 1; }
+.slider-wrap { display: flex; align-items: center; gap: 10px; }
+.slider-wrap input[type=range] { flex: 1; }
+.slider-value { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-1); min-width: 20px; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.toggle-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-2); }
+.toggle {
+  width: 34px; height: 18px;
+  border-radius: 9px;
+  background: #e5e7eb;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+  flex-shrink: 0;
+}
+.toggle.on { background: var(--green); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 7px;
+  background: #fff;
+  top: 2px; left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle.on::after { transform: translateX(16px); }
+.save-btn {
+  width: 100%;
+  padding: 9px;
+  background: var(--text-1);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+.save-btn:hover { background: #2d2b22; }
+
+/* Notification */
+.notification {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text-1);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 7px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  z-index: 300;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.notification.show { transform: translateX(-50%) translateY(0); }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 2px; }
+.sidebar ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     GALLERY (First Launch)
+═══════════════════════════════════════════════════════ -->
+<div id="gallery">
+  <div class="gallery-left">
+    <div>
+      <div class="gallery-wordmark">Orchestra</div>
+      <div class="gallery-title">Research<br><em>Studio</em></div>
+      <div class="gallery-sub">
+        Multi-agent AI authoring with<br>RAG verification, live debate,<br>and citation persistence.
+      </div>
+      <div class="gallery-badges">
+        <div class="g-badge blue">kimi-k2.5</div>
+        <div class="g-badge green">deepseek-v3.2</div>
+        <div class="g-badge violet">qwen3.5</div>
+        <div class="g-badge amber">flux.2-klein</div>
+      </div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:8.5px;color:#1f2937;line-height:1.6">
+      NVIDIA NIM · LangGraph · ChromaDB<br>
+      FastAPI · Next.js · Tiptap
+    </div>
+  </div>
+
+  <div class="gallery-right">
+    <div class="gallery-section-title">Choose a Template</div>
+    <div class="template-grid">
+      <div class="template-card" onclick="createDoc('ieee')">
+        <div class="template-preview ieee">
+          <div class="preview-cols">
+            <div class="preview-col">
+              <div class="preview-line head blue"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line mid"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line short"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line mid"></div>
+              <div class="preview-line wide"></div>
+            </div>
+            <div class="preview-col">
+              <div class="preview-line head blue"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line mid"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line short"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line mid"></div>
+              <div class="preview-line wide"></div>
+            </div>
+          </div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">IEEE Standard</div>
+          <div class="template-desc">Double column · Numbered sections</div>
+          <span class="template-badge ieee">IEEE</span>
+        </div>
+      </div>
+
+      <div class="template-card" onclick="createDoc('nature')">
+        <div class="template-preview nature">
+          <div class="preview-col" style="gap:5px">
+            <div class="preview-line head green" style="width:70%;margin:0 auto 4px"></div>
+            <div class="preview-line wide"></div>
+            <div class="preview-line mid"></div>
+            <div class="preview-line wide"></div>
+            <div style="height:32px;background:rgba(5,150,105,0.12);border-radius:3px;margin:4px 0"></div>
+            <div class="preview-line wide"></div>
+            <div class="preview-line short"></div>
+          </div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">Nature Journal</div>
+          <div class="template-desc">Single column · Large figures</div>
+          <span class="template-badge nature">Nature</span>
+        </div>
+      </div>
+
+      <div class="template-card" onclick="createDoc('apa')">
+        <div class="template-preview apa">
+          <div class="preview-col" style="gap:6px">
+            <div class="preview-line wide"></div>
+            <div class="preview-line wide"></div>
+            <div class="preview-line mid"></div>
+            <div class="preview-line wide" style="height:3px;opacity:0.5"></div>
+            <div class="preview-line wide"></div>
+            <div class="preview-line wide"></div>
+            <div class="preview-line wide"></div>
+            <div class="preview-line mid"></div>
+          </div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">APA Thesis</div>
+          <div class="template-desc">Double spaced · Chapter headers</div>
+          <span class="template-badge apa">APA</span>
+        </div>
+      </div>
+
+      <div class="template-card" onclick="createDoc('blank')">
+        <div class="template-preview blank">
+          <div style="display:flex;align-items:center;justify-content:center;height:100%;opacity:0.2">
+            <div style="width:60px;height:70px;border:1.5px solid #000;border-radius:2px"></div>
+          </div>
+        </div>
+        <div class="template-info">
+          <div class="template-name">Blank Canvas</div>
+          <div class="template-desc">Start from scratch</div>
+          <span class="template-badge blank">Blank</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent-section">
+      <div class="gallery-section-title">Recent Documents</div>
+      <div id="recentList">
+        <div class="recent-empty">Your research begins here.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     APP SHELL (Editor)
+═══════════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-logo" onclick="backToGallery()" title="Back to Gallery">Orchestra<em>◆</em></div>
+    <div class="toolbar-sep"></div>
+    <input class="doc-title-input" id="docTitleInput" type="text" value="Untitled Research"
+           onchange="updateTitle(this.value)" />
+    <div class="toolbar-sep"></div>
+    <button class="tbtn" id="scrutinyBtn" onclick="toggleScrutiny()">🌡 Scrutiny View</button>
+    <button class="tbtn" id="generateBtn" onclick="startGeneration()">✦ Generate</button>
+    <button class="tbtn danger" id="stopBtn" style="display:none" onclick="stopGeneration()">◼ Stop</button>
+    <div class="toolbar-sep"></div>
+    <div class="model-badge kimi" id="modelBadge">
+      <div class="mbdot" id="modelDot"></div>
+      <span id="modelName">kimi-k2.5</span>
+    </div>
+    <div class="toolbar-spacer"></div>
+    <button class="tbtn" onclick="showNotif('PDF import — connect backend to enable')">↑ Import PDF</button>
+    <button class="tbtn" onclick="openSettings()">⚙ Settings</button>
+    <button class="tbtn primary" onclick="showNotif('Exported as IEEE-formatted DOCX')">↓ Export</button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- OUTLINE -->
+    <div class="outline">
+      <div class="panel-header">Document Outline</div>
+      <div class="outline-list" id="outlineList"></div>
+    </div>
+
+    <!-- EDITOR SCROLL -->
+    <div class="editor-scroll" id="editorScroll">
+      <div class="heatmap-legend" id="heatmapLegend">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-3);margin-right:4px">Scrutiny:</span>
+        <div class="hm-item"><div class="hm-dot" style="background:rgba(37,99,235,0.4)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-3)">Original</span></div>
+        <div class="hm-item"><div class="hm-dot" style="background:rgba(5,150,105,0.4)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-3)">RAG-Verified</span></div>
+        <div class="hm-item"><div class="hm-dot" style="background:rgba(220,38,38,0.4)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-3)">Needs Review</span></div>
+      </div>
+      <div id="pagesContainer"></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-tabs">
+        <div class="sidebar-tab active" id="stab0" onclick="switchSidebarTab(0)">Thought Stream</div>
+        <div class="sidebar-tab" id="stab1" onclick="switchSidebarTab(1)">Context</div>
+      </div>
+
+      <!-- THOUGHT STREAM -->
+      <div id="sidepanel0" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="thought-stream" id="thoughtStream"></div>
+        <div class="sidebar-input-area">
+          <div class="sidebar-input-hint">Mention @Kimi @DeepSeek @Qwen @Flux to direct a model</div>
+          <div class="sidebar-input-wrap">
+            <textarea class="sidebar-input" id="sidebarInput" rows="1"
+              placeholder="@DeepSeek audit §3.1 statistical claims..."
+              onkeydown="handleSidebarKey(event)"></textarea>
+            <button class="sidebar-send-btn" onclick="sendSidebarMessage()">→</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTEXT LIBRARIAN -->
+      <div id="sidepanel1" style="flex:1;overflow:hidden;display:none;flex-direction:column">
+        <div class="librarian-panel">
+          <div class="drop-zone" id="dropZone"
+               onclick="document.getElementById('fileInput').click()"
+               ondragover="handleDragOver(event)"
+               ondragleave="handleDragLeave(event)"
+               ondrop="handleFileDrop(event)">
+            <div class="drop-icon">📄</div>
+            <div class="drop-text">
+              <strong>Click or drag PDF / DOCX</strong><br>
+              to add to RAG index
+            </div>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf,.docx" style="display:none" onchange="handleFileSelect(event)">
+          <div id="ingestList"></div>
+          <div class="lib-section-title">Indexed References</div>
+          <div id="refList"><div style="font-family:'DM Mono',monospace;font-size:9.5px;color:#374151;padding:8px 14px">No references indexed yet</div></div>
+          <div class="lib-section-title" style="margin-top:12px">Web Search Results</div>
+          <div id="webResults"><div style="font-family:'DM Mono',monospace;font-size:9.5px;color:#374151;padding:4px 14px">Loading...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span id="statusWords">0 words</span>
+    <span class="status-dot">•</span>
+    <span id="statusModel">Active: kimi-k2.5</span>
+    <span class="status-dot">•</span>
+    <span id="statusRag">RAG: 0 docs</span>
+    <span class="status-dot">•</span>
+    <span id="statusGen">Ready</span>
+  </div>
+</div>
+
+<!-- ── PIVOT MODAL ────────────────────────────────────── -->
+<div class="modal-backdrop" id="pivotModal">
+  <div class="modal-box">
+    <div class="modal-title">Generation Stopped</div>
+    <div class="modal-sub" id="pivotSub">Interrupted · partial output preserved</div>
+    <div class="pivot-option" onclick="pivotAction('keep')">
+      <div class="pivot-icon" style="background:#ecfdf5">📌</div>
+      <div>
+        <div class="pivot-label">Keep &amp; Continue</div>
+        <div class="pivot-desc">Save partial output and resume from this point later</div>
+      </div>
+    </div>
+    <div class="pivot-option" onclick="pivotAction('discard')">
+      <div class="pivot-icon" style="background:#fff1f2">🗑</div>
+      <div>
+        <div class="pivot-label">Discard &amp; Regenerate</div>
+        <div class="pivot-desc">Roll back and retry with a different approach</div>
+      </div>
+    </div>
+    <div class="pivot-option" id="switchModelOpt" onclick="toggleModelChips()">
+      <div class="pivot-icon" style="background:#eff6ff">🔀</div>
+      <div style="flex:1">
+        <div class="pivot-label">Switch Model</div>
+        <div class="pivot-desc">Current model struggling — try another NIM</div>
+        <div class="model-chips" id="modelChips" style="display:none">
+          <div class="model-chip kimi" onclick="switchModel('kimi-k2.5','kimi');event.stopPropagation()">Kimi K2.5</div>
+          <div class="model-chip ds" onclick="switchModel('deepseek-v3.2','ds');event.stopPropagation()">DeepSeek V3.2</div>
+          <div class="model-chip qw" onclick="switchModel('qwen3.5','qw');event.stopPropagation()">Qwen 3.5</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETTINGS MODAL ─────────────────────────────────── -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal-box" style="width:460px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div class="modal-title" style="margin-bottom:0">Instruction Ledger</div>
+      <button onclick="closeSettings()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#9ca3af">✕</button>
+    </div>
+    <div class="settings-tabs">
+      <div class="settings-tab active" onclick="switchSettingsTab(0)">Project</div>
+      <div class="settings-tab" onclick="switchSettingsTab(1)">Tone</div>
+      <div class="settings-tab" onclick="switchSettingsTab(2)">Rigor</div>
+    </div>
+    <!-- Project panel -->
+    <div class="settings-panel active" id="spanel0">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Target Journal</label>
+          <select class="form-select" id="cfgJournal">
+            <option>Nature</option><option>Science</option><option>IEEE</option><option>APA</option><option>Blank</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Citation Standard</label>
+          <select class="form-select" id="cfgCitation">
+            <option>IEEE</option><option>APA</option><option>Chicago</option><option>Vancouver</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Research Field</label>
+        <input class="form-input" id="cfgField" type="text" value="Quantum Computing">
+      </div>
+    </div>
+    <!-- Tone panel -->
+    <div class="settings-panel" id="spanel1">
+      <div class="form-group">
+        <label class="form-label">Writing Profile</label>
+        <select class="form-select" id="cfgProfile">
+          <option>Academic/Formal</option><option>Technical</option><option>Explanatory</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Voice</label>
+        <select class="form-select" id="cfgVoice">
+          <option>Third Person</option><option>First Person</option><option>Passive</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Density — <span id="densityVal">High</span></label>
+        <div class="slider-wrap">
+          <input type="range" min="1" max="3" value="3" id="cfgDensity"
+                 oninput="document.getElementById('densityVal').textContent=['Low','Medium','High'][this.value-1]">
+          <span class="slider-value" id="densityNum">3</span>
+        </div>
+      </div>
+    </div>
+    <!-- Rigor panel -->
+    <div class="settings-panel" id="spanel2">
+      <div class="form-group">
+        <label class="form-label">Scientific Rigor — <span id="rigorVal">9</span>/10</label>
+        <div class="slider-wrap">
+          <input type="range" min="1" max="10" value="9" id="cfgRigor"
+                 oninput="document.getElementById('rigorVal').textContent=this.value">
+        </div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Require Citations</span>
+        <button class="toggle on" id="toggleCitations" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Flag Unverified Claims</span>
+        <button class="toggle on" id="toggleFlag" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Peer Review Mode</span>
+        <button class="toggle on" id="togglePeer" onclick="this.classList.toggle('on')"></button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max Hallucination Score</label>
+        <input class="form-input" id="cfgHallu" type="number" min="0.01" max="0.2" step="0.01" value="0.05">
+      </div>
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save Configuration</button>
+  </div>
+</div>
+
+<!-- ── VERIFY PANEL ───────────────────────────────────── -->
+<div class="verify-panel" id="verifyPanel">
+  <div class="verify-box">
+    <div class="verify-header">
+      <div class="verify-title" id="verifyTitle">Source Verification</div>
+      <button class="verify-close" onclick="closeVerify()">✕</button>
+    </div>
+    <div class="verify-body">
+      <div class="verify-src" id="verifySrc"></div>
+      <div class="verify-quote" id="verifyQuote"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NOTIFICATION ───────────────────────────────────── -->
+<div class="notification" id="notification"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const API = 'http://localhost:8000/api';
+let state = {
+  docId: null,
+  template: 'blank',
+  isGenerating: false,
+  scrutinyOn: false,
+  requestId: null,
+  abortCtrl: null,
+  currentModel: { key: 'kimi-k2.5', cls: 'kimi' },
+  references: [],
+  recentDocs: JSON.parse(localStorage.getItem('orchestra_recent') || '[]'),
+  config: null,
+  sectionCtx: 'Introduction',
+  tokenBuffer: '',
+  bufferInterval: null,
+  currentGhostParaId: null,
+};
+
+// ═══════════════════════════════════════════════════════
+// GALLERY
+// ═══════════════════════════════════════════════════════
+function renderRecent() {
+  const el = document.getElementById('recentList');
+  if (!state.recentDocs.length) {
+    el.innerHTML = '<div class="recent-empty">Your research begins here.</div>';
+    return;
+  }
+  el.innerHTML = state.recentDocs.slice(0,6).map(d => `
+    <div class="recent-item" onclick="openRecentDoc('${d.id}')">
+      <div class="recent-icon">📄</div>
+      <div class="recent-info">
+        <div class="recent-title">${d.title}</div>
+        <div class="recent-meta">${d.template.toUpperCase()} · ${new Date(d.ts).toLocaleDateString()}</div>
+      </div>
+    </div>`).join('');
+}
+renderRecent();
+
+async function createDoc(template) {
+  try {
+    const res = await fetch(`${API}/documents`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ template, title: 'Untitled Research' })
+    }).catch(() => null);
+
+    let docId, title = 'Untitled Research';
+    if (res && res.ok) {
+      const data = await res.json();
+      docId = data.id;
+    } else {
+      // Demo mode without backend
+      docId = crypto.randomUUID();
+    }
+
+    // Save to recent
+    const record = { id: docId, title, template, ts: Date.now() };
+    state.recentDocs.unshift(record);
+    state.recentDocs = state.recentDocs.slice(0, 20);
+    localStorage.setItem('orchestra_recent', JSON.stringify(state.recentDocs));
+
+    openEditor(docId, template, title);
+  } catch(e) {
+    const docId = crypto.randomUUID();
+    openEditor(docId, template, 'Untitled Research');
+  }
+}
+
+function openRecentDoc(id) {
+  const rec = state.recentDocs.find(d => d.id === id);
+  if (rec) openEditor(rec.id, rec.template, rec.title);
+}
+
+// ═══════════════════════════════════════════════════════
+// EDITOR INIT
+// ═══════════════════════════════════════════════════════
+function openEditor(docId, template, title) {
+  state.docId = docId;
+  state.template = template;
+
+  document.getElementById('gallery').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  document.getElementById('docTitleInput').value = title;
+
+  buildPages(template);
+  buildOutline(template);
+  loadConfig();
+  fetchWebSearch();
+
+  addThought('sys', 'NEXUS ORCHESTRATOR',
+    `Session initialized. Document: ${title}. Template: ${template.toUpperCase()}. ` +
+    'RAG index ready. Active model: kimi-k2.5. Peer reviewers: deepseek-v3.2, qwen3.5.');
+  addThought('kimi', 'KIMI K2.5 · LEAD ARCHITECT',
+    'Document structure analyzed. Ready to synthesize content from RAG corpus. ' +
+    'Invoke @Flux for figure generation or @DeepSeek for deep auditing.');
+}
+
+function backToGallery() {
+  if (state.isGenerating) stopGeneration();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('gallery').style.display = 'flex';
+  renderRecent();
+}
+
+// ═══════════════════════════════════════════════════════
+// PAGE BUILDER  (rich demo content)
+// ═══════════════════════════════════════════════════════
+const TEMPLATES = {
+  ieee: {
+    title: 'Topological Error Correction in Fault-Tolerant Quantum Computing: A Multi-Modal Neural Synthesis Approach',
+    authors: 'A. Krishnaswamy¹ · M. Petrov² · S. Nakamura³\n¹ Indian Institute of Science &nbsp;·&nbsp; ² ETH Zürich &nbsp;·&nbsp; ³ University of Tokyo',
+    abstract: 'Fault-tolerant quantum computing requires robust mechanisms for detecting and correcting errors that accumulate through decoherence and gate imperfections. This paper presents a novel multi-modal synthesis approach combining topological qubit stabilization with neural network-driven syndrome decoding. Our architecture achieves a logical error rate of 1.3 × 10⁻⁸ at a physical error rate threshold of 0.87%, representing a 12× improvement over current surface code implementations.',
+    sections: [
+      { id:'intro', h:'1. Introduction', sub:[{id:'bg',h:'1.1 Background &amp; Prior Work'},{id:'rw',h:'1.2 Related Work'}] },
+      { id:'meth', h:'2. Methodology', sub:[{id:'arch',h:'2.1 Neural Syndrome Decoder'},{id:'train',h:'2.2 Training Protocol'}] },
+      { id:'res', h:'3. Results', sub:[{id:'bench',h:'3.1 Benchmark Comparisons'},{id:'abl',h:'3.2 Ablation Study'}] },
+      { id:'disc', h:'4. Discussion' },
+      { id:'conc', h:'5. Conclusion' },
+      { id:'refs', h:'References' },
+    ]
+  },
+  nature: {
+    title: 'Emergent Collective Behaviour in Neural Assemblies Under Cortical Feedback Suppression',
+    authors: 'E. Marchetti¹ · R. Osei-Bonsu² · C. Lindblad³\n¹ Karolinska Institutet &nbsp;·&nbsp; ² Stanford University &nbsp;·&nbsp; ³ Max Planck Institute',
+    abstract: 'Cortical feedback loops play a central role in shaping the temporal dynamics of neural assemblies. Here we report that transient pharmacological suppression of layer-VI feedback projections produces paradoxical enhancement of gamma-band synchrony in primary visual cortex. Using calcium imaging across 4,200 simultaneously recorded neurons in awake behaving mice, we demonstrate that local inhibitory interneuron networks compensate for feedback loss through a novel self-organized criticality mechanism.',
+    sections: [
+      { id:'intro', h:'Introduction' },
+      { id:'res', h:'Results', sub:[{id:'r1',h:'Calcium Imaging'},{id:'r2',h:'Network Dynamics'}] },
+      { id:'disc', h:'Discussion' },
+      { id:'meth', h:'Methods' },
+      { id:'refs', h:'References' },
+    ]
+  },
+  apa: {
+    title: 'Metacognitive Regulation and Working Memory Capacity in Adolescent Learners: A Longitudinal Investigation',
+    authors: 'Dr. Sarah Chen & Prof. James Okonkwo\nDepartment of Educational Psychology, University of Michigan',
+    abstract: 'This longitudinal study examines the relationship between metacognitive regulatory strategies and working memory capacity (WMC) in adolescent learners across a 24-month period. Participants (N = 847, age 13–17) were assessed biannually using established instruments for metacognitive monitoring, strategic planning, and WMC. Results indicate that metacognitive regulation mediates the relationship between WMC and academic achievement, with effect sizes increasing substantially during mid-adolescence.',
+    sections: [
+      { id:'intro', h:'Introduction' },
+      { id:'meth', h:'Method', sub:[{id:'par',h:'Participants'},{id:'meas',h:'Measures'}] },
+      { id:'res', h:'Results' },
+      { id:'disc', h:'Discussion' },
+      { id:'conc', h:'Conclusion' },
+      { id:'refs', h:'References' },
+    ]
+  },
+  blank: {
+    title: 'Untitled Research Document',
+    authors: '',
+    abstract: '',
+    sections: [
+      { id:'intro', h:'Introduction' },
+      { id:'body', h:'Body' },
+      { id:'conc', h:'Conclusion' },
+      { id:'refs', h:'References' },
+    ]
+  }
+};
+
+const BODY_CONTENT = {
+  ieee: [
+    { id:'intro', src:'src-verified', text:`The realization of practical quantum computation at scale demands a fundamental rethinking of error correction paradigms. Classical fault tolerance, derived from the von Neumann redundancy model<span class="vbadge ok" onclick="showVerify('Verified','von Neumann (1956)','Probabilistic logics and the synthesis of reliable organisms from unreliable components. Automata Studies 34: 43–98.')">✓</span>, assumes discrete, well-characterized failure modes. Quantum systems, however, exhibit continuous error manifolds arising from environmental decoherence, introducing a complexity that resists classical treatment.` },
+    { id:'bgPara', src:'src-original', text:`Recent advances in topological quantum codes — particularly the surface code<span class="vbadge ok" onclick="showVerify('Verified','Kitaev (2003)','Fault-tolerant quantum computation by anyons. Annals of Physics 303(1): 2–30.')">✓</span> and color codes<span class="vbadge ok" onclick="showVerify('Verified','Bombin (2007)','Topological quantum distillation. Physical Review Letters 97, 180501.')">✓</span> — have demonstrated remarkable theoretical thresholds. Practical implementation is constrained by the polynomial overhead of syndrome measurement circuits and the latency bottleneck of classical decoding pipelines.` },
+    { id:'rwPara', src:'src-flagged', text:`<span class="vbadge err" onclick="showVerify('Unverified','DeepSeek V3.2 Flag','The 12× improvement figure requires explicit baseline specification. Comparator not found in RAG corpus. Recommend adding Fowler et al. (2012) §4.')">!</span> This work introduces a hierarchical syndrome decoding framework wherein a neural network ensemble — trained on simulated Pauli error channels of varying intensity — provides sub-microsecond decoding decisions. The ensemble leverages a transformer-based architecture pre-conditioned on topological graph representations of the qubit lattice.`, isGhost:true },
+    { id:'methPara', src:'src-verified', text:`Our decoder, termed <em>TopoNet-7</em>, processes the syndrome graph as a message-passing neural network. Each vertex v ∈ V<sub>s</sub> corresponds to a stabilizer measurement outcome, and edges encode spatial adjacency on the lattice. The network propagates belief messages across three aggregation layers before emitting a binary error-correction decision vector aligned with the Pauli group.` },
+    { id:'trainPara', src:'src-original', text:`Models were trained on a cluster of 64 NVIDIA H100 SXM5 GPUs using AdamW with a cosine annealing schedule. The base learning rate was set to 3 × 10⁻⁴ with linear warmup over 2,000 steps<span class="vbadge warn" onclick="showVerify('Partial','Internal Analysis','Warmup steps chosen empirically. No ablation of this parameter in RAG corpus.')">?</span>. Gradient clipping at norm 1.0 was applied to stabilize training in the early phase.` },
+    { id:'benchPara', src:'src-verified', text:`Against the MWPM baseline, TopoNet-7 achieves a 12.3× reduction in logical error rate at p = 0.005 for d = 9, and an 8.7× improvement at the threshold boundary p = 0.0087<span class="vbadge ok" onclick="showVerify('Verified','Internal Benchmark','95% CI: ±0.4× at d=9. Reproducibility seed: 42. Compared against PyMatching v2.2.1.')">✓</span>. Decoding latency averages 0.31 μs on an NVIDIA A100.` },
+    { id:'ablPara', src:'src-original', text:`Systematic ablation reveals that the RoPE positional encoding<span class="vbadge ok" onclick="showVerify('Verified','Su et al. (2022)','RoFormer: Enhanced transformer with rotary position embedding. Neurocomputing 568, 127063.')">✓</span> contributes 34% of the total logical error rate improvement, with the remaining 66% attributable to graph-structured message-passing layers.` },
+    { id:'discPara', src:'src-verified', text:`The empirical results establish TopoNet-7 as a viable replacement for MWPM in near-term fault-tolerant architectures operating at physical error rates below 0.7%. The sub-microsecond decoding latency is achievable on commodity GPU inference hardware, suggesting a practical deployment pathway without requiring custom ASIC development.` },
+    { id:'concPara', src:'src-original', text:`We have presented TopoNet-7, a neural syndrome decoder for topological quantum error correction that achieves state-of-the-art logical error rates with sub-microsecond decoding latency. The combination of graph-structured message passing and RoPE-adapted positional encoding provides a robust framework that generalizes across code distances and noise intensities within the depolarizing channel family.` },
+  ]
+};
+
+function buildPages(template) {
+  const cfg = TEMPLATES[template] || TEMPLATES.blank;
+  const container = document.getElementById('pagesContainer');
+  container.innerHTML = '';
+
+  // Page 1
+  const p1 = makePage(1);
+  let html = `<div class="doc-main-title">${cfg.title}</div>`;
+  if (cfg.authors) html += `<div class="doc-authors">${cfg.authors.replace(/\n/g,'<br>')}</div>`;
+  if (cfg.abstract) {
+    html += `<div class="doc-abstract-label">Abstract</div>`;
+    html += `<div class="doc-abstract">${cfg.abstract}</div>`;
+  }
+  html += '<div class="doc-divider"></div>';
+
+  const bodies = BODY_CONTENT[template] || [];
+  let bodyIdx = 0;
+
+  cfg.sections.forEach((sec, si) => {
+    html += `<div class="doc-h1" id="sec-${sec.id}">${sec.h}</div>`;
+    if (bodies[bodyIdx] && !bodies[bodyIdx].isGhost) {
+      const b = bodies[bodyIdx++];
+      html += makePara(b);
+    } else if (bodies[bodyIdx] && bodies[bodyIdx].isGhost) {
+      const b = bodies[bodyIdx++];
+      html += makeGhostPara(b);
+    } else {
+      html += `<div class="doc-p src-original" onclick="selectParagraph(this)">
+        <span style="color:rgba(0,0,0,0.2);font-style:italic">Begin writing here...</span>
+      </div>`;
+    }
+
+    if (sec.sub) {
+      sec.sub.forEach(sub => {
+        html += `<div class="doc-h2" id="sec-${sub.id}">${sub.h}</div>`;
+        if (bodies[bodyIdx] && !bodies[bodyIdx].isGhost) {
+          html += makePara(bodies[bodyIdx++]);
+        } else if (bodies[bodyIdx] && bodies[bodyIdx].isGhost) {
+          html += makeGhostPara(bodies[bodyIdx++]);
+        } else {
+          html += `<div class="doc-p src-original" onclick="selectParagraph(this)">
+            <span style="color:rgba(0,0,0,0.2);font-style:italic">Begin writing here...</span>
+          </div>`;
+        }
+      });
+    }
+
+    // Add figure placeholder for method/results sections
+    if (si === 1 && template === 'ieee') {
+      html += makeFigure(1, 'Topological structure of the rotated surface code (d=7). Stabilizer paths overlaid, labels A–D indicate syndrome extraction vertices.');
+    }
+  });
+
+  // References
+  if (template === 'ieee') {
+    html += `<div class="doc-divider"></div>
+    <div class="doc-h1" id="sec-refs">References</div>
+    <div class="doc-p src-original" style="font-family:'DM Mono',monospace;font-size:10.5px;line-height:2;font-size:10px">
+      [1] Fowler, A. G. et al. (2012). Surface codes: Towards practical large-scale quantum computation. <em>Phys. Rev. A</em> 86, 032324.<br>
+      [2] Preskill, J. (2018). Quantum computing in the NISQ era and beyond. <em>Quantum</em> 2, 79.<br>
+      [3] Su, J. et al. (2022). RoFormer: Enhanced transformer with rotary position embedding. <em>Neurocomputing</em> 568, 127063.<br>
+      [4] Gidney, C. (2021). Stim: A fast stabilizer circuit simulator. <em>Quantum</em> 5, 497.<br>
+      [5] Google Quantum AI (2023). Suppressing quantum errors by scaling a surface code logical qubit. <em>Nature</em> 614, 676–681.
+    </div>`;
+  }
+
+  p1.innerHTML += html;
+  container.appendChild(p1);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    setTimeout(() => p1.classList.add('loaded'), 60);
+  });
+}
+
+function makePara(b) {
+  return `<div class="doc-p ${b.src}" id="p-${b.id}" onclick="selectParagraph(this)">${b.text}</div>`;
+}
+
+function makeGhostPara(b) {
+  return `
+    <div class="doc-p ${b.src} ghost-para" id="p-${b.id}" onclick="selectParagraph(this)">
+      <span class="ghost-text">${b.text}</span>
+    </div>
+    <div class="ghost-bar visible" id="gb-${b.id}">
+      <button class="ghost-btn accept" onclick="acceptGhost('${b.id}')">✓ Accept</button>
+      <button class="ghost-btn reject" onclick="rejectGhost('${b.id}')">✕ Discard</button>
+      <span class="ghost-model">Generated by kimi-k2.5</span>
+    </div>`;
+}
+
+function makeFigure(n, caption) {
+  return `
+  <div class="fig-block">
+    <div class="fig-placeholder" id="figph-${n}">
+      <div class="fig-icon">⬡</div>
+      <div class="fig-label">Figure ${n} · Awaiting Generation</div>
+      <div class="fig-prompt">"${caption}"</div>
+      <button class="fig-gen-btn" onclick="generateFigure(${n})">⚡ Generate with flux.2-klein-4b</button>
+    </div>
+    <div id="figv-${n}" style="display:none"></div>
+    <div class="fig-caption">Figure ${n}. ${caption} (Generated by flux.2-klein-4b)</div>
+  </div>`;
+}
+
+function makePage(n) {
+  const div = document.createElement('div');
+  div.className = 'page';
+  div.id = `page-${n}`;
+  div.innerHTML = `<div class="page-number">${n}</div>`;
+  return div;
+}
+
+// ═══════════════════════════════════════════════════════
+// OUTLINE
+// ═══════════════════════════════════════════════════════
+function buildOutline(template) {
+  const cfg = TEMPLATES[template] || TEMPLATES.blank;
+  const list = document.getElementById('outlineList');
+  list.innerHTML = '';
+
+  const makeItem = (id, label, cls='', level='') => {
+    const div = document.createElement('div');
+    div.className = `outline-item ${cls} ${level}`;
+    div.textContent = label.replace(/&amp;/g,'&').replace(/<[^>]+>/g,'');
+    div.onclick = () => {
+      document.querySelectorAll('.outline-item').forEach(i => i.classList.remove('active'));
+      div.classList.add('active');
+      const el = document.getElementById(`sec-${id}`);
+      if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+    };
+    list.appendChild(div);
+  };
+
+  makeItem('abstract', 'Abstract', 'active');
+  cfg.sections.forEach(sec => {
+    makeItem(sec.id, sec.h);
+    if (sec.sub) sec.sub.forEach(s => makeItem(s.id, s.h, '', 'h2'));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// SCRUTINY MODE
+// ═══════════════════════════════════════════════════════
+function toggleScrutiny() {
+  state.scrutinyOn = !state.scrutinyOn;
+  document.getElementById('editorScroll').classList.toggle('hm-on', state.scrutinyOn);
+  document.getElementById('scrutinyBtn').classList.toggle('on', state.scrutinyOn);
+  document.getElementById('heatmapLegend').classList.toggle('visible', state.scrutinyOn);
+  showNotif(state.scrutinyOn ? 'Scrutiny View ON — paragraphs colored by source type' : 'Scrutiny View OFF');
+}
+
+// ═══════════════════════════════════════════════════════
+// GENERATION
+// ═══════════════════════════════════════════════════════
+function startGeneration() {
+  if (state.isGenerating) return;
+  state.isGenerating = true;
+  state.requestId = crypto.randomUUID();
+  state.abortCtrl = new AbortController();
+  state.currentGhostParaId = crypto.randomUUID();
+
+  document.getElementById('generateBtn').classList.add('gen-pulse');
+  document.getElementById('stopBtn').style.display = 'flex';
+  document.getElementById('modelDot').classList.add('live');
+  document.getElementById('statusGen').textContent = 'Generating...';
+  switchSidebarTab(0);
+
+  const instruction = document.getElementById('sidebarInput').value.trim()
+    || `Continue writing the ${state.sectionCtx} section with empirical evidence`;
+
+  addThought('kimi','KIMI K2.5 · GENERATING',
+    `Analyzing document context. Retrieving RAG chunks for: "${instruction.slice(0,60)}..."`,
+    'Pulling from indexed references');
+
+  const payload = {
+    document_id: state.docId,
+    section: state.sectionCtx,
+    instruction,
+    context_paragraphs: getContextParagraphs(),
+    mention_override: extractMention(instruction),
+    stream: true,
+    request_id: state.requestId
+  };
+
+  startSSE(payload);
+}
+
+function extractMention(text) {
+  const m = text.match(/@(Kimi|DeepSeek|Qwen|Flux)/i);
+  return m ? `@${m[1]}` : null;
+}
+
+function getContextParagraphs() {
+  return Array.from(document.querySelectorAll('.doc-p'))
+    .slice(-3)
+    .map(p => p.innerText.trim())
+    .filter(Boolean);
+}
+
+let ghostAccum = '';
+
+function startSSE(payload) {
+  ghostAccum = '';
+
+  fetch(`${API}/generate`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload),
+    signal: state.abortCtrl.signal,
+  })
+  .then(async res => {
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+
+    while(true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream:true});
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const evt = JSON.parse(line.slice(6));
+            handleSSEEvent(evt);
+          } catch{}
+        }
+      }
+    }
+    finishGeneration();
+  })
+  .catch(err => {
+    if (err.name !== 'AbortError') {
+      // Demo mode: simulate generation
+      simulateGeneration();
+    }
+  });
+}
+
+function handleSSEEvent(evt) {
+  switch(evt.event) {
+    case 'thought':
+      if (evt.data) addThought(
+        evt.data.model?.includes('kimi') ? 'kimi' :
+        evt.data.model?.includes('deep') ? 'ds' :
+        evt.data.model?.includes('qwen') ? 'qw' :
+        evt.data.model?.includes('flux') ? 'fx' : 'sys',
+        (evt.data.role || 'system').toUpperCase(),
+        evt.data.content,
+        evt.data.citation
+      );
+      break;
+    case 'delta':
+      ghostAccum += evt.data.text || '';
+      renderGhostDelta(ghostAccum, evt.data.paragraph_id);
+      break;
+    case 'ghost_complete':
+      insertGhostParagraph(evt.data.text, evt.data.paragraph_id, evt.data.generated_by);
+      break;
+    case 'verified':
+      addThought('ds','DEEPSEEK · VERIFIED',`✓ Claim verified: "${(evt.data.text||'').slice(0,80)}..."`, `Confidence: ${((evt.data.confidence||0.9)*100).toFixed(0)}%`);
+      break;
+    case 'flagged':
+      addThought('ds','DEEPSEEK · FLAGGED',`⚠ ${evt.data.issue||'Unverified claim'}: "${(evt.data.sentence||'').slice(0,60)}..."`);
+      break;
+    case 'aborted':
+      finishGeneration(true);
+      showPivotModal();
+      break;
+    case 'done':
+      finishGeneration();
+      break;
+    case 'stream_end':
+      finishGeneration();
+      break;
+  }
+}
+
+// Demo simulation when no backend
+function simulateGeneration() {
+  const paraId = state.currentGhostParaId;
+  const text = 'Validation was performed on a held-out test set of 1.2 × 10⁶ syndrome instances, stratified across code distances d ∈ {5, 7, 9, 11, 13}. Early stopping was applied with a patience window of 15 epochs, monitored on validation logical error rate rather than cross-entropy loss — reflecting the asymmetric cost structure of quantum error correction, where false negatives carry exponentially higher penalty than false positives.';
+
+  const thoughts = [
+    ['kimi','KIMI K2.5 · SYNTHESIS','Analyzing §2.1 context. Identifying continuation vector for Training Protocol. Pulling 3 source documents from RAG index...'],
+    ['ds','DEEPSEEK V3.2 · AUDITING','Monitoring generated output in real time. Flagging hyperparameter values without citation. Checking numerical claims...','Fowler et al. (2012) §4, Google QAI (2023) Table 2'],
+    ['qw','QWEN 3.5 · LOGIC CHECK','Statistical methodology sound. N = 1.2×10⁶ samples sufficient for p-value < 0.001 given observed effect size.'],
+    ['kimi','KIMI K2.5 · COMPLETE','Generation complete. 1 paragraph produced. 1 claim flagged for verification. Awaiting user review.'],
+  ];
+
+  let delay = 300;
+  thoughts.forEach((t, i) => {
+    setTimeout(() => addThought(t[0], t[1], t[2], t[3]), delay);
+    delay += 1200;
+  });
+
+  // Simulate delta streaming
+  let charIdx = 0;
+  const streamInterval = setInterval(() => {
+    if (!state.isGenerating || charIdx >= text.length) {
+      clearInterval(streamInterval);
+      setTimeout(() => {
+        removeStreamingIndicator();
+        insertGhostParagraph(text, paraId, 'kimi-k2.5');
+        finishGeneration();
+        showNotif('Generation complete — review draft below');
+      }, 200);
+      return;
+    }
+    charIdx = Math.min(charIdx + 8, text.length);
+    renderGhostDelta(text.slice(0, charIdx), paraId);
+  }, 60);
+}
+
+let streamingIndicator = null;
+function renderGhostDelta(text, paraId) {
+  if (!streamingIndicator) {
+    streamingIndicator = document.createElement('div');
+    streamingIndicator.className = 'doc-p src-flagged';
+    streamingIndicator.id = `stream-${paraId}`;
+    streamingIndicator.style.cssText = 'border-left:2px solid rgba(37,99,235,0.3);padding-left:9px;margin-left:-11px;background:rgba(37,99,235,0.04)';
+    const container = document.getElementById('pagesContainer');
+    const page = container.querySelector('.page');
+    if (page) page.insertBefore(streamingIndicator, page.querySelector('.page-number'));
+  }
+  streamingIndicator.innerHTML = `<span class="ghost-text">${text}</span><span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>`;
+}
+
+function removeStreamingIndicator() {
+  if (streamingIndicator) {
+    streamingIndicator.remove();
+    streamingIndicator = null;
+  }
+}
+
+function insertGhostParagraph(text, paraId, model) {
+  removeStreamingIndicator();
+  const container = document.getElementById('pagesContainer');
+  const page = container.querySelector('.page');
+  if (!page) return;
+
+  const paraDiv = document.createElement('div');
+  paraDiv.className = 'doc-p src-flagged ghost-para';
+  paraDiv.id = `p-${paraId}`;
+  paraDiv.innerHTML = `<span class="ghost-text">${text}</span>`;
+  paraDiv.onclick = () => selectParagraph(paraDiv);
+
+  const barDiv = document.createElement('div');
+  barDiv.className = 'ghost-bar visible';
+  barDiv.id = `gb-${paraId}`;
+  barDiv.innerHTML = `
+    <button class="ghost-btn accept" onclick="acceptGhost('${paraId}')">✓ Accept Draft</button>
+    <button class="ghost-btn reject" onclick="rejectGhost('${paraId}')">✕ Discard</button>
+    <span class="ghost-model">Generated by ${model}</span>`;
+
+  const pn = page.querySelector('.page-number');
+  page.insertBefore(barDiv, pn);
+  page.insertBefore(paraDiv, barDiv);
+
+  showNotif('AI draft ready — Cmd+Enter to accept, Cmd+Backspace to discard');
+}
+
+function finishGeneration(aborted = false) {
+  state.isGenerating = false;
+  document.getElementById('generateBtn').classList.remove('gen-pulse');
+  document.getElementById('stopBtn').style.display = 'none';
+  document.getElementById('modelDot').classList.remove('live');
+  document.getElementById('statusGen').textContent = aborted ? 'Stopped' : 'Ready';
+  document.getElementById('sidebarInput').value = '';
+}
+
+function stopGeneration() {
+  if (!state.isGenerating) return;
+  if (state.abortCtrl) state.abortCtrl.abort();
+  fetch(`${API}/abort/${state.requestId}`, {method:'POST'}).catch(()=>{});
+  finishGeneration(true);
+  showPivotModal();
+  addThought('sys','NEXUS ORCHESTRATOR','Generation interrupted. Partial output preserved. Awaiting pivot decision...');
+}
+
+// ═══════════════════════════════════════════════════════
+// GHOST ACCEPT / REJECT
+// ═══════════════════════════════════════════════════════
+function acceptGhost(id) {
+  const para = document.getElementById(`p-${id}`);
+  const bar = document.getElementById(`gb-${id}`);
+  if (!para) return;
+  const ghostSpan = para.querySelector('.ghost-text');
+  if (ghostSpan) {
+    ghostSpan.classList.remove('ghost-text');
+    ghostSpan.style.fontStyle = '';
+  }
+  para.classList.remove('ghost-para', 'src-flagged');
+  para.classList.add('src-verified');
+  if (bar) bar.remove();
+  addThought('kimi','KIMI K2.5','Draft accepted. Paragraph incorporated. Cross-link map updated.');
+  showNotif('Draft accepted');
+}
+
+function rejectGhost(id) {
+  const para = document.getElementById(`p-${id}`);
+  const bar = document.getElementById(`gb-${id}`);
+  if (para) { para.style.opacity='0'; para.style.transition='opacity 0.3s'; setTimeout(()=>para.remove(),300); }
+  if (bar) { bar.style.opacity='0'; bar.style.transition='opacity 0.3s'; setTimeout(()=>bar.remove(),300); }
+  addThought('sys','NEXUS ORCHESTRATOR','Draft discarded. Document rolled back to pre-generation state.');
+  showNotif('Discarded — rolled back');
+}
+
+// ═══════════════════════════════════════════════════════
+// FIGURE GENERATION
+// ═══════════════════════════════════════════════════════
+function generateFigure(n) {
+  const ph = document.getElementById(`figph-${n}`);
+  const gv = document.getElementById(`figv-${n}`);
+  if (!ph) return;
+
+  ph.innerHTML = `<div class="fig-label" style="display:flex;align-items:center;gap:8px">
+    <span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>
+    flux.2-klein-4b generating...
+  </div>`;
+
+  addThought('fx','FLUX.2-KLEIN · VISUAL','Generating Figure ' + n + '. Applying minimalist scientific diagram style. Externalizing all text labels...');
+
+  setTimeout(() => {
+    ph.style.display = 'none';
+    gv.style.display = 'block';
+    gv.innerHTML = n === 1 ? makeSurfaceSVG() : makeChartSVG();
+    addThought('fx','FLUX.2-KLEIN · COMPLETE','Figure ' + n + ' generated. Labels A–D positioned. Aspect ratio 16:9.');
+    showNotif(`Figure ${n} generated by flux.2-klein-4b`);
+  }, 3000);
+}
+
+function makeSurfaceSVG() {
+  const sz=7, cs=36, off=16;
+  let edges='', circles='';
+  for(let r=0;r<sz;r++) for(let c=0;c<sz;c++){
+    const x=off+c*cs, y=off+r*cs;
+    if(c<sz-1) edges+=`<line x1="${x}" y1="${y}" x2="${x+cs}" y2="${y}" stroke="#cbd5e1" stroke-width="1.2"/>`;
+    if(r<sz-1) edges+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+cs}" stroke="#cbd5e1" stroke-width="1.2"/>`;
+    const stab=(r+c)%2===0;
+    circles+=`<circle cx="${x}" cy="${y}" r="${stab?8:5.5}" fill="${stab?'#1e3a5f':'#f0f4f8'}" stroke="${stab?'#4a90d9':'#94a3b8'}" stroke-width="1.5"/>`;
+  }
+  const lbs=[{r:1,c:1,l:'A'},{r:1,c:5,l:'B'},{r:5,c:1,l:'C'},{r:5,c:5,l:'D'}];
+  const lbls=lbs.map(({r,c,l})=>`<text x="${off+c*cs}" y="${off+r*cs-13}" text-anchor="middle" font-family="monospace" font-size="10" fill="#334155" font-weight="600">${l}</text>`).join('');
+  return `<svg viewBox="0 0 280 280" style="width:100%;max-width:280px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0">
+    ${edges}${circles}${lbls}
+    <text x="140" y="275" text-anchor="middle" font-family="monospace" font-size="8.5" fill="#64748b">Surface Code d=7 · Stabilizer Lattice</text>
+  </svg>`;
+}
+
+function makeChartSVG() {
+  const w=380,h=220,pL=48,pR=14,pT=18,pB=38,cW=w-pL-pR,cH=h-pT-pB;
+  const dists=[5,7,9,11,13], cols=['#94a3b8','#60a5fa','#34d399','#f59e0b','#f87171'];
+  let paths='', leg='';
+  dists.forEach((d,i)=>{
+    const pts=[];
+    for(let j=0;j<=20;j++){
+      const p=0.001+j*0.0007;
+      const le=-Math.pow(10,2-i*0.55)*Math.pow(p/0.01,d*0.38)+0.012;
+      const x=pL+(p/0.015)*cW;
+      const y=pT+cH*(1-Math.max(0,Math.min(1,(Math.log10(Math.max(le,1e-9))+9)/9)));
+      pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+    }
+    paths+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${cols[i]}" stroke-width="1.8" opacity=".9"/>`;
+    leg+=`<rect x="${pL+i*60}" y="${h-10}" width="20" height="3" fill="${cols[i]}" rx="1"/>
+          <text x="${pL+i*60+10}" y="${h-13}" text-anchor="middle" font-size="8" fill="#64748b" font-family="monospace">d=${d}</text>`;
+  });
+  const thX=(pL+(0.0087/0.015)*cW).toFixed(1);
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0">
+    <line x1="${pL}" y1="${pT}" x2="${pL}" y2="${pT+cH}" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="${pL}" y1="${pT+cH}" x2="${pL+cW}" y2="${pT+cH}" stroke="#e2e8f0" stroke-width="1"/>
+    <line x1="${thX}" y1="${pT}" x2="${thX}" y2="${pT+cH}" stroke="#e11d48" stroke-width="1" stroke-dasharray="4,3" opacity=".7"/>
+    <text x="${parseFloat(thX)+3}" y="${pT+12}" font-size="7" fill="#e11d48" font-family="monospace">p_th=0.87%</text>
+    <text x="${pL/2}" y="${pT+cH/2}" text-anchor="middle" transform="rotate(-90,${pL/2},${pT+cH/2})" font-size="7.5" fill="#64748b" font-family="monospace">log L_err</text>
+    <text x="${pL+cW/2}" y="${h-2}" text-anchor="middle" font-size="7.5" fill="#64748b" font-family="monospace">Physical error rate p</text>
+    ${paths}${leg}</svg>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════════
+function switchSidebarTab(n) {
+  [0,1].forEach(i => {
+    document.getElementById(`stab${i}`).classList.toggle('active', i===n);
+    document.getElementById(`sidepanel${i}`).style.display = i===n ? 'flex' : 'none';
+  });
+  if (n === 1 && !state._webSearchDone) fetchWebSearch();
+}
+
+function addThought(model, tag, text, cite=null) {
+  const stream = document.getElementById('thoughtStream');
+  const div = document.createElement('div');
+  div.className = `thought-entry ${model}`;
+  div.innerHTML = `
+    <div class="thought-tag ${model}">
+      <span class="thought-dot"></span>${tag}
+    </div>
+    <div class="thought-text">${text}</div>
+    ${cite ? `<div class="thought-cite">↳ ${cite}</div>` : ''}`;
+  stream.appendChild(div);
+  stream.scrollTop = stream.scrollHeight;
+}
+
+function handleSidebarKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendSidebarMessage();
+  }
+}
+
+function sendSidebarMessage() {
+  const input = document.getElementById('sidebarInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  addThought('usr','USER DIRECTIVE', text);
+
+  const mention = extractMention(text);
+  const respModel = mention ? mention.toLowerCase().replace('@','') : 'kimi';
+  const modelKey = respModel === 'deepseek' ? 'ds' : respModel === 'qwen' ? 'qw' : respModel === 'flux' ? 'fx' : 'kimi';
+
+  const responses = {
+    ds: "Analyzing specified section. Cross-referencing numerical claims against RAG corpus. Checking for: (1) unsubstantiated statistics, (2) undefined comparators, (3) overclaims relative to cited methodology.",
+    kimi: "Understood. Initiating synthesis pass. Pulling additional context from reference documents. Preparing coherence analysis with inter-disciplinary connection map.",
+    qw: "Reviewing logical validity. Statistical methods appear sound for the primary claims. Detected one potential confounding variable — will flag inline.",
+    fx: "Ready to generate a visual. Extracting caption context and paragraph semantics. Applying minimalist scientific diagram style.",
+  };
+  const cites = {
+    ds: 'Checking: Fowler et al. (2012) §4, Google QAI (2023) Table 2',
+    kimi: 'Pulling: Leverrier (2022) §3.2 + context window',
+    qw: null, fx: null,
+  };
+
+  setTimeout(() => {
+    addThought(modelKey, modelKey.toUpperCase() + ' · RESPONSE', responses[modelKey] || responses.kimi, cites[modelKey]);
+  }, 900);
+
+  if (!mention) {
+    input.value = '';
+    startGeneration();
+  } else {
+    input.value = '';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// FILE UPLOAD / RAG
+// ═══════════════════════════════════════════════════════
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  document.getElementById('dropZone').classList.remove('drag-over');
+}
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if (files.length) processFile(files[0]);
+}
+function handleFileSelect(e) {
+  if (e.target.files.length) processFile(e.target.files[0]);
+}
+
+async function processFile(file) {
+  const jobEl = document.createElement('div');
+  jobEl.className = 'ingest-progress';
+  const jobId = crypto.randomUUID();
+  jobEl.id = `job-${jobId}`;
+  jobEl.innerHTML = `
+    <div class="ingest-name">${file.name}</div>
+    <div class="ingest-stage" id="stage-${jobId}">Extracting text...</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-${jobId}" style="width:10%"></div></div>`;
+  document.getElementById('ingestList').appendChild(jobEl);
+
+  addThought('sys','NEXUS ORCHESTRATOR',`Ingesting: ${file.name}. Chunking with 512-token window, 64-token overlap. Embedding with all-MiniLM-L6-v2.`);
+
+  // Try real API upload
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API}/documents/${state.docId}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    if (res.ok) {
+      const job = await res.json();
+      pollIngestJob(job.job_id, jobId, file.name);
+      return;
+    }
+  } catch(e) {}
+
+  // Demo simulation
+  simulateIngest(jobId, file.name);
+}
+
+async function pollIngestJob(serverJobId, localJobId, filename) {
+  const stages = ['Extracting text...','Chunking...','Embedding...','Indexing...','Complete'];
+  let si = 0;
+  const interval = setInterval(async () => {
+    try {
+      const res = await fetch(`${API}/documents/${state.docId}/references/status/${serverJobId}`);
+      if (res.ok) {
+        const data = await res.json();
+        const progEl = document.getElementById(`prog-${localJobId}`);
+        const stageEl = document.getElementById(`stage-${localJobId}`);
+        if (progEl) progEl.style.width = `${(data.progress||0)*100}%`;
+        if (stageEl) stageEl.textContent = data.stage || stages[si] || 'Processing...';
+        if (data.status === 'complete') {
+          clearInterval(interval);
+          completeIngest(localJobId, filename, data.reference);
+        } else if (data.status === 'error') {
+          clearInterval(interval);
+          simulateIngest(localJobId, filename); // Fallback
+        }
+      }
+    } catch(e) { si++; }
+  }, 1500);
+}
+
+function simulateIngest(localJobId, filename) {
+  const stages = ['Extracting text...','Chunking...','Embedding...','Indexing...'];
+  let si = 0;
+  const interval = setInterval(() => {
+    const progEl = document.getElementById(`prog-${localJobId}`);
+    const stageEl = document.getElementById(`stage-${localJobId}`);
+    if (progEl) progEl.style.width = `${(si+1)*25}%`;
+    if (stageEl) stageEl.textContent = stages[si] || 'Complete';
+    si++;
+    if (si >= stages.length) {
+      clearInterval(interval);
+      completeIngest(localJobId, filename, { title: filename, chunk_count: 47 });
+    }
+  }, 800);
+}
+
+function completeIngest(localJobId, filename, ref) {
+  const jobEl = document.getElementById(`job-${localJobId}`);
+  if (jobEl) jobEl.remove();
+
+  const refId = crypto.randomUUID();
+  state.references.push({ id: refId, filename, title: ref?.title || filename, chunks: ref?.chunk_count || 0 });
+  document.getElementById('statusRag').textContent = `RAG: ${state.references.length} doc${state.references.length!==1?'s':''}`;
+
+  renderRefList();
+  addThought('sys','NEXUS ORCHESTRATOR',`Indexed: ${filename}. ${ref?.chunk_count||47} chunks embedded. ChromaDB collection updated.`,
+    `Source available for RAG retrieval`);
+  showNotif(`${filename} indexed — ${ref?.chunk_count||47} chunks ready`);
+}
+
+function renderRefList() {
+  const el = document.getElementById('refList');
+  if (!state.references.length) {
+    el.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:9.5px;color:#374151;padding:8px 14px">No references indexed yet</div>';
+    return;
+  }
+  el.innerHTML = state.references.map(r => `
+    <div class="ref-card" onclick="showVerify('RAG Source','${r.title}','${r.chunks} chunks indexed. Available for RAG retrieval in generation requests.')">
+      <div class="ref-card-name">${r.filename}</div>
+      <div class="ref-card-meta">${r.title} <span class="ref-badge">${r.chunks} chunks</span></div>
+    </div>`).join('');
+}
+
+async function fetchWebSearch() {
+  const field = state.config?.project?.field || 'Quantum Computing';
+  state._webSearchDone = true;
+  const el = document.getElementById('webResults');
+
+  try {
+    const res = await fetch(`${API}/references/web-search`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ topic: field, n: 4 }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      renderWebResults(data.results);
+      return;
+    }
+  } catch(e) {}
+
+  // Demo results
+  renderWebResults([
+    { title: `Recent advances in ${field}`, source: 'arxiv.org', snippet: 'Novel findings with empirical validation...', year: 2024 },
+    { title: `Survey of ${field} methods`, source: 'pubmed.ncbi.nlm.nih.gov', snippet: 'Comprehensive review across 147 studies...', year: 2024 },
+    { title: `Benchmarks for ${field}`, source: 'arxiv.org', snippet: 'Standardized evaluation framework...', year: 2023 },
+  ]);
+}
+
+function renderWebResults(results) {
+  const el = document.getElementById('webResults');
+  if (!results || !results.length) {
+    el.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:9.5px;color:#374151;padding:4px 14px">No results found</div>';
+    return;
+  }
+  el.innerHTML = results.map(r => `
+    <div class="web-result">
+      <div class="web-result-title">${r.title}</div>
+      <div class="web-result-snippet">${r.snippet || ''}</div>
+      <div class="web-result-meta">${r.source||''} · ${r.year||''}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// VERIFICATION PANEL
+// ═══════════════════════════════════════════════════════
+function showVerify(title, src, quote) {
+  document.getElementById('verifyTitle').textContent = title;
+  document.getElementById('verifySrc').textContent = src;
+  document.getElementById('verifyQuote').textContent = quote;
+  document.getElementById('verifyPanel').classList.add('visible');
+}
+function closeVerify() { document.getElementById('verifyPanel').classList.remove('visible'); }
+
+// ═══════════════════════════════════════════════════════
+// PIVOT MODAL
+// ═══════════════════════════════════════════════════════
+function showPivotModal() {
+  document.getElementById('pivotModal').classList.add('visible');
+}
+function pivotAction(action) {
+  document.getElementById('pivotModal').classList.remove('visible');
+  document.getElementById('modelChips').style.display = 'none';
+  if (action === 'keep') {
+    addThought('sys','NEXUS ORCHESTRATOR','Keep selected. Partial output preserved. Resume generation when ready.');
+    showNotif('Partial output kept');
+  } else if (action === 'discard') {
+    // Remove all ghost paragraphs
+    document.querySelectorAll('.ghost-para').forEach(p => p.remove());
+    document.querySelectorAll('.ghost-bar').forEach(b => b.remove());
+    removeStreamingIndicator();
+    addThought('sys','NEXUS ORCHESTRATOR','Discard selected. Document rolled back to stable checkpoint.');
+    showNotif('Rolled back — regenerate when ready');
+  }
+  document.getElementById('statusGen').textContent = 'Ready';
+}
+function toggleModelChips() {
+  const c = document.getElementById('modelChips');
+  c.style.display = c.style.display === 'none' ? 'flex' : 'none';
+}
+function switchModel(name, cls) {
+  state.currentModel = { key: name, cls };
+  const badge = document.getElementById('modelBadge');
+  badge.className = 'model-badge ' + cls;
+  document.getElementById('modelName').textContent = name;
+  document.getElementById('statusModel').textContent = 'Active: ' + name;
+  document.getElementById('pivotModal').classList.remove('visible');
+  document.getElementById('modelChips').style.display = 'none';
+  addThought('sys','NEXUS ORCHESTRATOR',`Model switched to ${name}. Context transferred. Previous state archived.`);
+  showNotif(`Switched to ${name}`);
+}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+async function loadConfig() {
+  try {
+    const res = await fetch(`${API}/config`);
+    if (res.ok) {
+      state.config = await res.json();
+      applyConfig();
+    }
+  } catch(e) {
+    state.config = { project: { field: 'Quantum Computing', target_journal: 'Nature' } };
+  }
+}
+
+function applyConfig() {
+  if (!state.config) return;
+  const p = state.config.project || {};
+  const t = state.config.tone || {};
+  const r = state.config.rigor || {};
+  if (p.field) document.getElementById('cfgField').value = p.field;
+  if (p.target_journal) {
+    const sel = document.getElementById('cfgJournal');
+    for(let o of sel.options) if(o.text === p.target_journal) o.selected = true;
+  }
+}
+
+function openSettings() { document.getElementById('settingsModal').classList.add('visible'); }
+function closeSettings() { document.getElementById('settingsModal').classList.remove('visible'); }
+function switchSettingsTab(n) {
+  document.querySelectorAll('.settings-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('.settings-panel').forEach((p,i) => p.classList.toggle('active', i===n));
+}
+
+async function saveSettings() {
+  const payload = {
+    project: {
+      target_journal: document.getElementById('cfgJournal').value,
+      citation_standard: document.getElementById('cfgCitation').value,
+      field: document.getElementById('cfgField').value,
+    },
+    tone: {
+      profile: document.getElementById('cfgProfile').value,
+      voice: document.getElementById('cfgVoice').value,
+      density: ['Low','Medium','High'][parseInt(document.getElementById('cfgDensity').value)-1],
+    },
+    rigor: {
+      level: parseInt(document.getElementById('cfgRigor').value),
+      require_citations: document.getElementById('toggleCitations').classList.contains('on'),
+      flag_unverified_claims: document.getElementById('toggleFlag').classList.contains('on'),
+      peer_review_mode: document.getElementById('togglePeer').classList.contains('on'),
+      max_hallucination_score: parseFloat(document.getElementById('cfgHallu').value),
+    }
+  };
+
+  try {
+    await fetch(`${API}/config`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+    });
+    state.config = { ...state.config, ...payload };
+  } catch(e) {}
+
+  closeSettings();
+  showNotif('Configuration saved — agents will use new settings');
+}
+
+// ═══════════════════════════════════════════════════════
+// PARAGRAPH SELECTION
+// ═══════════════════════════════════════════════════════
+function selectParagraph(el) {
+  document.querySelectorAll('.doc-p.selected').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+
+  // Set section context from nearest heading
+  let prev = el.previousElementSibling;
+  while (prev) {
+    if (prev.classList.contains('doc-h1') || prev.classList.contains('doc-h2')) {
+      state.sectionCtx = prev.textContent.replace(/^\d+\.\s*/,'').trim();
+      break;
+    }
+    prev = prev.previousElementSibling;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// TITLE UPDATE / WORD COUNT
+// ═══════════════════════════════════════════════════════
+function updateTitle(val) {
+  const rec = state.recentDocs.find(d => d.id === state.docId);
+  if (rec) { rec.title = val; localStorage.setItem('orchestra_recent', JSON.stringify(state.recentDocs)); }
+  countWords();
+}
+
+function countWords() {
+  const text = document.getElementById('pagesContainer')?.innerText || '';
+  const wc = text.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('statusWords').textContent = `${wc} words`;
+}
+
+// Count words periodically
+setInterval(countWords, 3000);
+
+// ═══════════════════════════════════════════════════════
+// NOTIFICATION
+// ═══════════════════════════════════════════════════════
+let notifTimer = null;
+function showNotif(msg) {
+  const el = document.getElementById('notification');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    const ghost = document.querySelector('.ghost-para');
+    if (ghost) {
+      const id = ghost.id.replace('p-','');
+      acceptGhost(id);
+    }
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Backspace') {
+    const ghost = document.querySelector('.ghost-para');
+    if (ghost) {
+      const id = ghost.id.replace('p-','');
+      rejectGhost(id);
+    }
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('sidebarInput')?.focus();
+  }
+  if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'S') {
+    toggleScrutiny();
+  }
+});
+</script>
+</body>
+</html>

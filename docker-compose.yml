@@ -1,0 +1,82 @@
+version: "3.9"
+
+# Orchestra Research — Docker Compose
+#
+# Services:
+#   backend  - FastAPI + uvicorn (port 8000)
+#   frontend - Next.js production build (port 3000)
+#
+# Usage:
+#   cp backend/.env.example backend/.env   # add NVIDIA_API_KEY
+#   docker-compose up --build
+#
+# Data volumes:
+#   chroma_db  - ChromaDB vector store (persisted)
+#   sidecars   - Reference inference JSON files (persisted)
+#   uploads    - Uploaded PDFs/DOCX (persisted)
+#   static     - Flux-generated images (persisted)
+
+services:
+  # ── Backend ─────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: orchestra-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      - CHROMA_PERSIST_DIR=/app/data/chroma_db
+      - SIDECAR_DIR=/app/data/sidecars
+      - UPLOAD_DIR=/app/data/uploads
+      - STATIC_DIR=/app/data/static
+      - CORS_ORIGINS=http://localhost:3000,http://frontend:3000
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/app/data/chroma_db
+      - sidecar_data:/app/data/sidecars
+      - upload_data:/app/data/uploads
+      - static_data:/app/data/static
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - orchestra
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://backend:8000
+    container_name: orchestra-frontend
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - orchestra
+
+volumes:
+  chroma_data:
+    driver: local
+  sidecar_data:
+    driver: local
+  upload_data:
+    driver: local
+  static_data:
+    driver: local
+
+networks:
+  orchestra:
+    driver: bridge

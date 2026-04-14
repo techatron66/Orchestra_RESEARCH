@@ -1,0 +1,32 @@
+{
+  "project": {
+    "title": "Untitled Research",
+    "target_journal": "Nature",
+    "citation_standard": "IEEE",
+    "field": "Quantum Computing"
+  },
+  "tone": {
+    "profile": "Academic/Formal",
+    "voice": "Third Person",
+    "density": "High"
+  },
+  "rigor": {
+    "level": 9,
+    "require_citations": true,
+    "flag_unverified_claims": true,
+    "max_hallucination_score": 0.05,
+    "peer_review_mode": true
+  },
+  "models": {
+    "lead_synthesis": ["moonshotai/kimi-k2.5", "z-ai/glm-5"],
+    "logic_verification": ["qwen/qwen3.5-397b-a17b", "deepseek-ai/deepseek-v3.2"],
+    "visual_generation": "black-forest-labs/flux.2-klein-4b",
+    "metadata_extraction": "z-ai/glm-5"
+  },
+  "rag": {
+    "top_k": 8,
+    "similarity_threshold": 0.72,
+    "web_augmentation": true,
+    "auto_search_on_new_doc": true
+  }
+}

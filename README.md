@@ -159,10 +159,3 @@ curl -X POST http://localhost:8000/api/references/web-search \
 | `UPLOAD_DIR` | No | Default: `./uploads` |
 | `CORS_ORIGINS` | No | Default: `http://localhost:3000` |
 
-## Demo Mode
-
-The frontend works fully without a backend (demo mode):
-- Document creation uses `crypto.randomUUID()` locally
-- Generation is simulated with realistic streaming delays and thought entries
-- File uploads show simulated ingestion progress
-- All UI interactions, ghost drafts, scrutiny view, and modals work fully
